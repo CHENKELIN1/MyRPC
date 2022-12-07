@@ -3,13 +3,14 @@ package com.ckl.rpc;
 import com.ckl.rpc.api.HelloObject;
 import com.ckl.rpc.api.HelloService;
 import com.ckl.rpc.api.MyTest;
-import com.ckl.rpc.client.RpcClientProxy;
+import com.ckl.rpc.socket.client.SocketClient;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class TestClient {
+public class TestSocketClient {
     public static void main(String[] args) {
-        RpcClientProxy rpcClientProxy=new RpcClientProxy("127.0.0.1",9000);
+        RpcClient rpcClient=new SocketClient("127.0.0.1",9000);
+        RpcClientProxy rpcClientProxy=new RpcClientProxy(rpcClient);
         HelloService helloService=rpcClientProxy.getProxy(HelloService.class);
         HelloObject helloObject=new HelloObject(12,"hello");
         String res=helloService.hello(helloObject);

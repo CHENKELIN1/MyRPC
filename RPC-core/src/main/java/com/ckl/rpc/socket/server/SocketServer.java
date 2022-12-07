@@ -1,5 +1,7 @@
-package com.ckl.rpc.server;
+package com.ckl.rpc.socket.server;
 
+import com.ckl.rpc.RequestHandler;
+import com.ckl.rpc.RpcServer;
 import com.ckl.rpc.registry.ServiceRegistry;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,7 +11,7 @@ import java.net.Socket;
 import java.util.concurrent.*;
 
 @Slf4j
-public class RpcServer {
+public class SocketServer implements RpcServer {
     private static final int CORE_POOL_SIZE = 5;
     private static final int MAXIMUM_POOL_SIZE = 50;
     private static final int KEEP_ALIVE_TIME = 60;
@@ -18,7 +20,7 @@ public class RpcServer {
     private RequestHandler requestHandler = new RequestHandler();
     private final ServiceRegistry serviceRegistry;
 
-    public RpcServer(ServiceRegistry serviceRegistry) {
+    public SocketServer(ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
         BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
         ThreadFactory threadFactory = Executors.defaultThreadFactory();

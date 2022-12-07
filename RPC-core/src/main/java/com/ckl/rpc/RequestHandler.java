@@ -1,4 +1,4 @@
-package com.ckl.rpc.server;
+package com.ckl.rpc;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;

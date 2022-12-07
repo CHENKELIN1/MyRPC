@@ -4,16 +4,16 @@ import com.ckl.rpc.api.HelloService;
 import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.registry.DefaultServiceRegistry;
 import com.ckl.rpc.registry.ServiceRegistry;
-import com.ckl.rpc.server.RpcServer;
+import com.ckl.rpc.socket.server.SocketServer;
 
-public class TestServer {
+public class TestSocketServer {
     public static void main(String[] args) {
         HelloService helloService=new HelloServiceImpl();
         MyTest myTest=new MyTestImpl();
         ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
         serviceRegistry.register(helloService);
         serviceRegistry.register(myTest);
-        RpcServer rpcServer = new RpcServer(serviceRegistry);
-        rpcServer.start(9000);
+        SocketServer socketServer = new SocketServer(serviceRegistry);
+        socketServer.start(9000);
     }
 }
