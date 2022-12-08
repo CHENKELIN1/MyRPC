@@ -2,7 +2,7 @@ package com.ckl.rpc.exception;
 
 import com.ckl.rpc.enumeration.RpcError;
 
-public class RpcException extends RuntimeException{
+public class RpcException extends RuntimeException {
 
     public RpcException(RpcError error, String detail) {
         super(error.getMessage() + ": " + detail);

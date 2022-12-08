@@ -1,4 +1,4 @@
-package com.ckl.rpc.server;
+package com.ckl.rpc;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
@@ -17,7 +17,8 @@ public class RequestHandler {
             log.info("服务:{} 成功调用方法:{}", rpcRequest.getInterfaceName(), rpcRequest.getMethodName());
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("调用或发送时有错误发生：", e);
-        } return result;
+        }
+        return result;
     }
 
     private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) throws IllegalAccessException, InvocationTargetException {
@@ -25,7 +26,7 @@ public class RequestHandler {
         try {
             method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
         } catch (NoSuchMethodException e) {
-            return RpcResponse.fail(ResponseCode.NOT_FOUND_METHOD);
+            return RpcResponse.fail(ResponseCode.NOT_FOUND_METHOD, rpcRequest.getRequestId());
         }
         return method.invoke(service, rpcRequest.getParameters());
     }
