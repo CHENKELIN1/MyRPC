@@ -16,6 +16,6 @@ public class TestSocketServer {
         serviceRegistry.register(myTest);
         SocketServer socketServer = new SocketServer(serviceRegistry);
         socketServer.setSerializer(new HessianSerializer());
-        socketServer.start(9000);
+        socketServer.start(9999);
     }
 }
