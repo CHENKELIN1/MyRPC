@@ -4,6 +4,7 @@ import com.ckl.rpc.api.HelloService;
 import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.registry.DefaultServiceRegistry;
 import com.ckl.rpc.registry.ServiceRegistry;
+import com.ckl.rpc.serializer.HessianSerializer;
 import com.ckl.rpc.socket.server.SocketServer;
 
 public class TestSocketServer {
@@ -14,6 +15,7 @@ public class TestSocketServer {
         serviceRegistry.register(helloService);
         serviceRegistry.register(myTest);
         SocketServer socketServer = new SocketServer(serviceRegistry);
+        socketServer.setSerializer(new HessianSerializer());
         socketServer.start(9000);
     }
 }
