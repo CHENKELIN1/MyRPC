@@ -1,4 +1,4 @@
-package com.ckl.rpc.socket.client;
+package com.ckl.rpc.transport.socket.client;
 
 import com.ckl.rpc.RpcClient;
 import com.ckl.rpc.entity.RpcRequest;
@@ -6,36 +6,39 @@ import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.ResponseCode;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.registry.NacosServiceRegistry;
+import com.ckl.rpc.registry.ServiceRegistry;
 import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.socket.util.ObjectReader;
-import com.ckl.rpc.socket.util.ObjectWriter;
+import com.ckl.rpc.transport.socket.util.ObjectReader;
+import com.ckl.rpc.transport.socket.util.ObjectWriter;
 import com.ckl.rpc.util.RpcMessageChecker;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 @Slf4j
 public class SocketClient implements RpcClient {
-    private final String host;
-    private final int port;
+    private final ServiceRegistry serviceRegistry;
 
     private CommonSerializer serializer;
 
-    public SocketClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public SocketClient() {
+        this.serviceRegistry = new NacosServiceRegistry();
     }
 
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
-        if (serializer == null) {
+        if(serializer == null) {
             log.error("未设置序列化器");
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
-        try (Socket socket = new Socket(host, port)) {
+        InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+        try (Socket socket = new Socket()) {
+            socket.connect(inetSocketAddress);
             OutputStream outputStream = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
             ObjectWriter.writeObject(outputStream, rpcRequest, serializer);

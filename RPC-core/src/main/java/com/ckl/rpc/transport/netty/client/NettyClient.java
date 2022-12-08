@@ -1,10 +1,12 @@
-package com.ckl.rpc.netty.client;
+package com.ckl.rpc.transport.netty.client;
 
 import com.ckl.rpc.RpcClient;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.registry.NacosServiceRegistry;
+import com.ckl.rpc.registry.ServiceRegistry;
 import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.util.RpcMessageChecker;
 import io.netty.bootstrap.Bootstrap;
@@ -22,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class NettyClient implements RpcClient {
     private static final Bootstrap bootstrap;
-
+    private final ServiceRegistry serviceRegistry;
     private CommonSerializer serializer;
 
     static {
@@ -33,12 +35,8 @@ public class NettyClient implements RpcClient {
                 .option(ChannelOption.SO_KEEPALIVE, true);
     }
 
-    private String host;
-    private int port;
-
-    public NettyClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public NettyClient() {
+        this.serviceRegistry = new NacosServiceRegistry();
     }
 
     @Override
@@ -49,7 +47,8 @@ public class NettyClient implements RpcClient {
         }
         AtomicReference<Object> result = new AtomicReference<>(null);
         try {
-            Channel channel = ChannelProvider.get(new InetSocketAddress(host, port), serializer);
+            InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+            Channel channel = ChannelProvider.get(inetSocketAddress, serializer);
             if (channel.isActive()) {
                 channel.writeAndFlush(rpcRequest).addListener(future1 -> {
                     if (future1.isSuccess()) {

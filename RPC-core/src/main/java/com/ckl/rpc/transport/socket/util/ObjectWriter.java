@@ -1,4 +1,4 @@
-package com.ckl.rpc.socket.util;
+package com.ckl.rpc.transport.socket.util;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.PackageType;

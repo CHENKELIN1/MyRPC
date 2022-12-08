@@ -1,4 +1,4 @@
-package com.ckl.rpc.netty.client;
+package com.ckl.rpc.transport.netty.client;
 
 import com.ckl.rpc.entity.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
