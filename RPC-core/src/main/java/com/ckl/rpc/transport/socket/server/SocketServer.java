@@ -3,13 +3,14 @@ package com.ckl.rpc.transport.socket.server;
 import com.ckl.rpc.RpcServer;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.handler.RequestHandler;
+import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProvider;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
 import com.ckl.rpc.registry.ServiceRegistry;
 import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.util.ThreadPoolFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -50,12 +51,14 @@ public class SocketServer implements RpcServer {
 
     @Override
     public void start() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+        try (ServerSocket serverSocket = new ServerSocket()) {
+            serverSocket.bind(new InetSocketAddress(host, port));
             log.info("服务器启动……");
+            ShutdownHook.getShutdownHook().addClearAllHook();
             Socket socket;
             while ((socket = serverSocket.accept()) != null) {
                 log.info("消费者连接: {}:{}", socket.getInetAddress(), socket.getPort());
-                threadPool.execute(new RequestHandlerThread(socket, requestHandler, serviceRegistry, serializer));
+                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer));
             }
             threadPool.shutdown();
         } catch (IOException e) {

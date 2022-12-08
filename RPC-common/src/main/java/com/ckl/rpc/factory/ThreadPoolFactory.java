@@ -1,4 +1,4 @@
-package com.ckl.rpc.util;
+package com.ckl.rpc.factory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
