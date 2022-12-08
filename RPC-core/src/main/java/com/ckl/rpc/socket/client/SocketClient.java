@@ -9,6 +9,7 @@ import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.socket.util.ObjectReader;
 import com.ckl.rpc.socket.util.ObjectWriter;
+import com.ckl.rpc.util.RpcMessageChecker;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class SocketClient implements RpcClient {
                 log.error("调用服务失败, service: {}, response:{}", rpcRequest.getInterfaceName(), rpcResponse);
                 throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service:" + rpcRequest.getInterfaceName());
             }
+            RpcMessageChecker.check(rpcRequest, rpcResponse);
             return rpcResponse.getData();
         } catch (IOException e) {
             log.error("调用时有错误发生：", e);

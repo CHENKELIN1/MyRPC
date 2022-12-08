@@ -8,6 +8,7 @@ import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.util.RpcMessageChecker;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -66,8 +67,9 @@ public class NettyClient implements RpcClient {
                     }
                 });
                 channel.closeFuture().sync();
-                AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
+                AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse" + rpcRequest.getRequestId());
                 RpcResponse rpcResponse = channel.attr(key).get();
+                RpcMessageChecker.check(rpcRequest, rpcResponse);
                 return rpcResponse.getData();
             }
 
