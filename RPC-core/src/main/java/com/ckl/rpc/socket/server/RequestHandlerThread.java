@@ -15,7 +15,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 @Slf4j
-public class RequestHandlerThread implements Runnable{
+public class RequestHandlerThread implements Runnable {
     private Socket socket;
     private RequestHandler requestHandler;
     private ServiceRegistry serviceRegistry;

@@ -43,14 +43,14 @@ public class NettyClient implements RpcClient {
 
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
-        if(serializer == null) {
+        if (serializer == null) {
             log.error("未设置序列化器");
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
         AtomicReference<Object> result = new AtomicReference<>(null);
         try {
             Channel channel = ChannelProvider.get(new InetSocketAddress(host, port), serializer);
-            if(channel.isActive()) {
+            if (channel.isActive()) {
                 channel.writeAndFlush(rpcRequest).addListener(future1 -> {
                     if (future1.isSuccess()) {
                         log.info(String.format("客户端发送消息: %s", rpcRequest.toString()));

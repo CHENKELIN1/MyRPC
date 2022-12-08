@@ -9,12 +9,12 @@ import com.ckl.rpc.serializer.HessianSerializer;
 
 public class TestNettyServer {
     public static void main(String[] args) {
-        HelloService helloService=new HelloServiceImpl();
-        MyTest myTest=new MyTestImpl();
-        ServiceRegistry serviceRegistry=new DefaultServiceRegistry();
+        HelloService helloService = new HelloServiceImpl();
+        MyTest myTest = new MyTestImpl();
+        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
         serviceRegistry.register(helloService);
         serviceRegistry.register(myTest);
-        NettyServer nettyServer=new NettyServer();
+        NettyServer nettyServer = new NettyServer();
         nettyServer.setSerializer(new HessianSerializer());
         nettyServer.start(9000);
     }

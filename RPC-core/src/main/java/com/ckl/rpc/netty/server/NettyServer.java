@@ -21,7 +21,7 @@ public class NettyServer implements RpcServer {
 
     @Override
     public void start(int port) {
-        if(serializer == null) {
+        if (serializer == null) {
             log.error("未设置序列化器");
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }

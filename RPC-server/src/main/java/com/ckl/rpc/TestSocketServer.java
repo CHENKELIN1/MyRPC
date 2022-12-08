@@ -9,8 +9,8 @@ import com.ckl.rpc.socket.server.SocketServer;
 
 public class TestSocketServer {
     public static void main(String[] args) {
-        HelloService helloService=new HelloServiceImpl();
-        MyTest myTest=new MyTestImpl();
+        HelloService helloService = new HelloServiceImpl();
+        MyTest myTest = new MyTestImpl();
         ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
         serviceRegistry.register(helloService);
         serviceRegistry.register(myTest);

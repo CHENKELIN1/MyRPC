@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Slf4j
-public class HessianSerializer implements CommonSerializer{
+public class HessianSerializer implements CommonSerializer {
     @Override
     public byte[] serialize(Object obj) {
         HessianOutput hessianOutput = null;
@@ -23,7 +23,7 @@ public class HessianSerializer implements CommonSerializer{
             log.error("序列化时有错误发生:", e);
             throw new SerializeException("序列化时有错误发生");
         } finally {
-            if(hessianOutput != null) {
+            if (hessianOutput != null) {
                 try {
                     hessianOutput.close();
                 } catch (IOException e) {
@@ -43,7 +43,7 @@ public class HessianSerializer implements CommonSerializer{
             log.error("序列化时有错误发生:", e);
             throw new SerializeException("序列化时有错误发生");
         } finally {
-            if(hessianInput != null) hessianInput.close();
+            if (hessianInput != null) hessianInput.close();
         }
     }
 
