@@ -2,6 +2,7 @@ package com.ckl.rpc.serializer;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.SerializerCode;
+import com.ckl.rpc.exception.SerializeException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,7 @@ public class JsonSerializer implements CommonSerializer {
             return objectMapper.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
             log.error("序列化时有错误发生: {}", e.getMessage());
-            e.printStackTrace();
-            return null;
+            throw new SerializeException("序列化出错");
         }
     }
 
@@ -33,8 +33,7 @@ public class JsonSerializer implements CommonSerializer {
             return obj;
         } catch (IOException e) {
             log.error("反序列化时有错误发生: {}", e.getMessage());
-            e.printStackTrace();
-            return null;
+            throw new SerializeException("序列化出错");
         }
     }
 
