@@ -1,6 +1,6 @@
 package com.ckl.rpc.transport.netty.server;
 
-import com.ckl.rpc.AbstractRpcServer;
+import com.ckl.rpc.transport.AbstractRpcServer;
 import com.ckl.rpc.codec.CommonDecoder;
 import com.ckl.rpc.codec.CommonEncoder;
 import com.ckl.rpc.hook.ShutdownHook;

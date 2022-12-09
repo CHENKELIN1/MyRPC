@@ -1,6 +1,6 @@
 package com.ckl.rpc.transport.socket.server;
 
-import com.ckl.rpc.AbstractRpcServer;
+import com.ckl.rpc.transport.AbstractRpcServer;
 import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.handler.RequestHandler;
 import com.ckl.rpc.hook.ShutdownHook;

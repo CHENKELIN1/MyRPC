@@ -3,6 +3,9 @@ package com.ckl.rpc.enumeration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * RPC错误信息
+ */
 @Getter
 @AllArgsConstructor
 public enum RpcError {
