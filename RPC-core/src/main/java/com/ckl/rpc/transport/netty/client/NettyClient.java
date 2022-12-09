@@ -6,6 +6,8 @@ import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.factory.SingletonFactory;
+import com.ckl.rpc.loadbalancer.LoadBalancer;
+import com.ckl.rpc.loadbalancer.RandomLoadBalancer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
 import com.ckl.rpc.serializer.CommonSerializer;
@@ -38,11 +40,16 @@ public class NettyClient implements RpcClient {
     private final UnprocessedRequests unprocessedRequests;
 
     public NettyClient() {
-        this(DEFAULT_SERIALIZER);
+        this(DEFAULT_SERIALIZER, new RandomLoadBalancer());
     }
-
+    public NettyClient(LoadBalancer loadBalancer) {
+        this(DEFAULT_SERIALIZER, loadBalancer);
+    }
     public NettyClient(Integer serializer) {
-        this.serviceDiscovery = new NacosServiceDiscovery();
+        this(serializer, new RandomLoadBalancer());
+    }
+    public NettyClient(Integer serializer, LoadBalancer loadBalancer) {
+        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
         this.serializer = CommonSerializer.getByCode(serializer);
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
