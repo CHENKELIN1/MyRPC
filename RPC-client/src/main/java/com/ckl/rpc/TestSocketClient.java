@@ -3,15 +3,14 @@ package com.ckl.rpc;
 import com.ckl.rpc.api.HelloObject;
 import com.ckl.rpc.api.HelloService;
 import com.ckl.rpc.api.MyTest;
-import com.ckl.rpc.serializer.HessianSerializer;
+import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.transport.socket.client.SocketClient;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TestSocketClient {
     public static void main(String[] args) {
-        RpcClient rpcClient = new SocketClient();
-        rpcClient.setSerializer(new HessianSerializer());
+        SocketClient rpcClient = new SocketClient(CommonSerializer.KRYO_SERIALIZER);
         RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcClient);
         HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
         HelloObject helloObject = new HelloObject(12, "hello");

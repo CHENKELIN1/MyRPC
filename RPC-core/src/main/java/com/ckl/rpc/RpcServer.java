@@ -3,9 +3,9 @@ package com.ckl.rpc;
 import com.ckl.rpc.serializer.CommonSerializer;
 
 public interface RpcServer {
-    void start();
+    int DEFAULT_SERIALIZER = CommonSerializer.KRYO_SERIALIZER;
 
-    void setSerializer(CommonSerializer serializer);
+    void start();
 
     <T> void publishService(T service, Class<T> serviceClass);
 }
