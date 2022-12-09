@@ -1,15 +1,11 @@
 package com.ckl.rpc.transport.netty.server;
 
-import com.ckl.rpc.RpcServer;
+import com.ckl.rpc.AbstractRpcServer;
 import com.ckl.rpc.codec.CommonDecoder;
 import com.ckl.rpc.codec.CommonEncoder;
-import com.ckl.rpc.enumeration.RpcError;
-import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.hook.ShutdownHook;
-import com.ckl.rpc.provider.ServiceProvider;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
-import com.ckl.rpc.registry.ServiceRegistry;
 import com.ckl.rpc.serializer.CommonSerializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -21,16 +17,10 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class NettyServer implements RpcServer {
-    private final String host;
-    private final int port;
-
-    private final ServiceRegistry serviceRegistry;
-    private final ServiceProvider serviceProvider;
+public class NettyServer extends AbstractRpcServer {
 
     private final CommonSerializer serializer;
 
@@ -44,17 +34,7 @@ public class NettyServer implements RpcServer {
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-    }
-
-    @Override
-    public <T> void publishService(T service, Class<T> serviceClass) {
-        if (serializer == null) {
-            log.error("未设置序列化器");
-            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
-        }
-        serviceProvider.addServiceProvider(service, serviceClass);
-        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
-        start();
+        scanServices();
     }
 
     @Override

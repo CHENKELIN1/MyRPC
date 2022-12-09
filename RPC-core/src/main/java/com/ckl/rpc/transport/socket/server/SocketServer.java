@@ -1,15 +1,11 @@
 package com.ckl.rpc.transport.socket.server;
 
-import com.ckl.rpc.RpcServer;
-import com.ckl.rpc.enumeration.RpcError;
-import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.AbstractRpcServer;
 import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.handler.RequestHandler;
 import com.ckl.rpc.hook.ShutdownHook;
-import com.ckl.rpc.provider.ServiceProvider;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
-import com.ckl.rpc.registry.ServiceRegistry;
 import com.ckl.rpc.serializer.CommonSerializer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,15 +16,11 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
-public class SocketServer implements RpcServer {
-    private final ExecutorService threadPool;;
-    private final String host;
-    private final int port;
+public class SocketServer extends AbstractRpcServer {
+
+    private final ExecutorService threadPool;
     private final CommonSerializer serializer;
     private final RequestHandler requestHandler = new RequestHandler();
-
-    private final ServiceRegistry serviceRegistry;
-    private final ServiceProvider serviceProvider;
 
     public SocketServer(String host, int port) {
         this(host, port, DEFAULT_SERIALIZER);
@@ -41,17 +33,7 @@ public class SocketServer implements RpcServer {
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-    }
-
-    @Override
-    public <T> void publishService(T service, Class<T> serviceClass) {
-        if(serializer == null) {
-            log.error("未设置序列化器");
-            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
-        }
-        serviceProvider.addServiceProvider(service, serviceClass);
-        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
-        start();
+        scanServices();
     }
 
     @Override
