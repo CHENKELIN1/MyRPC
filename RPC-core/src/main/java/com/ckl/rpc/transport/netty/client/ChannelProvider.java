@@ -29,7 +29,7 @@ public class ChannelProvider {
         String key = inetSocketAddress.toString() + serializer.getCode();
         if (channels.containsKey(key)) {
             Channel channel = channels.get(key);
-            if(channels != null && channel.isActive()) {
+            if (channels != null && channel.isActive()) {
                 return channel;
             } else {
                 channels.remove(key);

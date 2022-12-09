@@ -22,7 +22,7 @@ public class ServiceProviderImpl implements ServiceProvider {
     }
 
     @Override
-    public  Object getServiceProvider(String serviceName) {
+    public Object getServiceProvider(String serviceName) {
         Object service = serviceMap.get(serviceName);
         if (service == null) {
             throw new RpcException(RpcError.SERVICE_NOT_FOUND);

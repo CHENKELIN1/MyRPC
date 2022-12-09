@@ -40,6 +40,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
         cause.printStackTrace();
         ctx.close();
     }
+
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {

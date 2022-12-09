@@ -3,15 +3,25 @@ package com.ckl.rpc.factory;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 单例工厂
+ */
 public class SingletonFactory {
     private static Map<Class, Object> objectMap = new HashMap<>();
 
-    private SingletonFactory() {}
+    private SingletonFactory() {
+    }
 
+    /**
+     * 根据类获取单例对象
+     *
+     * @param clazz 要获取的类
+     * @return <T> 返回单例对象
+     */
     public static <T> T getInstance(Class<T> clazz) {
         Object instance = objectMap.get(clazz);
         synchronized (clazz) {
-            if(instance == null) {
+            if (instance == null) {
                 try {
                     instance = clazz.newInstance();
                     objectMap.put(clazz, instance);
