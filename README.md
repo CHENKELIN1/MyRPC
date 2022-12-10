@@ -69,7 +69,8 @@ Data            DataLength  传输数据
 4. 服务端实现接口
 5. 编写服务提供者
 6. 客户端远程调用
-7. 启动服务端和客户端
+7. 启动Nacos，在NacosUtil中配置Nacos服务
+8. 启动服务端和客户端
 
 ## 测试用例
 
@@ -115,27 +116,27 @@ Data            DataLength  传输数据
     ```
 4. 客户端远程调用
 
-```java
-package com.ckl.rpc;
-
-import com.ckl.rpc.api.MyTest;
-import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.transport.RpcClient;
-import com.ckl.rpc.transport.RpcClientProxy;
-import com.ckl.rpc.transport.netty.client.NettyClient;
-
-public class TestNettyClient {
-    public static void main(String[] args) {
-//        创建Netty客户端
-        RpcClient rpcClient = new NettyClient(CommonSerializer.JSON_SERIALIZER);
-//        创建rpc客户端代理
-        RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcClient);
-//        远程过程调用接口
-        MyTest myTest = rpcClientProxy.getProxy(MyTest.class);
-        System.out.println(myTest.getData());
-    }
-}
-```
+   ```java
+   package com.ckl.rpc;
+   
+   import com.ckl.rpc.api.MyTest;
+   import com.ckl.rpc.serializer.CommonSerializer;
+   import com.ckl.rpc.transport.RpcClient;
+   import com.ckl.rpc.transport.RpcClientProxy;
+   import com.ckl.rpc.transport.netty.client.NettyClient;
+   
+   public class TestNettyClient {
+       public static void main(String[] args) {
+   //        创建Netty客户端
+           RpcClient rpcClient = new NettyClient(CommonSerializer.JSON_SERIALIZER);
+   //        创建rpc客户端代理
+           RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcClient);
+   //        远程过程调用接口
+           MyTest myTest = rpcClientProxy.getProxy(MyTest.class);
+           System.out.println(myTest.getData());
+       }
+   }
+   ```
 
 ## 更新说明
 
