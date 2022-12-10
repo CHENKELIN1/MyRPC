@@ -22,7 +22,8 @@
 6. 实现Netty客户端失败重连
 7. 实现基于Nacos实现服务注册与发现
 8. 实现自动注销服务
-9. 服务端自动注册
+9. 实现负载均衡
+10. 服务端自动注册
 
 ## 项目运行
 
@@ -42,7 +43,28 @@
 - O:优化
 - F:修复
 
+## TODO list
+
+### 项目
+
+- [x] 负载均衡
+- [ ] 路由策略
+- [ ] 异常重试
+- [ ] 熔断限流
+- [ ] 业务分组
+- [ ] 添加测试用例
+
+### 深入学习
+
+- [ ] Netty相关内容
+- [ ] 注解反射相关内容
+- [ ] 动态代理相关内容
+- [ ] Nacos相关内容
+- [ ] 钩子函数相关内容
+- [ ] 多线程，JUC相关内容
+
 ## 参考文档
 
 1. https://time.geekbang.org/column/intro/100046201
 2. https://github.com/CN-GuoZiyang/My-RPC-Framework
+3. https://github.com/Snailclimb/guide-rpc-framework

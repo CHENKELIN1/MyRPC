@@ -2,6 +2,9 @@ package com.ckl.rpc.registry;
 
 import java.net.InetSocketAddress;
 
+/**
+ * 服务注册
+ */
 public interface ServiceRegistry {
     /**
      * 将一个服务注册进注册表

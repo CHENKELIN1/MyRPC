@@ -19,9 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Netty服务端
+ */
 @Slf4j
 public class NettyServer extends AbstractRpcServer {
-
+    //    序列化器
     private final CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
@@ -37,9 +40,14 @@ public class NettyServer extends AbstractRpcServer {
         scanServices();
     }
 
+    /**
+     * 启动服务
+     */
     @Override
     public void start() {
+//        添加注销服务的钩子函数
         ShutdownHook.getShutdownHook().addClearAllHook();
+//        TODO
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -56,8 +64,11 @@ public class NettyServer extends AbstractRpcServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS))
+//                                    添加编码器
                                     .addLast(new CommonEncoder(serializer))
+//                                    添加解码器
                                     .addLast(new CommonDecoder())
+//                                    添加Netty客户端处理器
                                     .addLast(new NettyServerHandler());
                         }
                     });

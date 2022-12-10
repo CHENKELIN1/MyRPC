@@ -15,9 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 
+/**
+ * Netty客户端处理器
+ * TODO
+ */
 @Slf4j
 public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
-
+    //    未处理请求
     private final UnprocessedRequests unprocessedRequests;
 
     public NettyClientHandler() {

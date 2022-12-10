@@ -8,8 +8,17 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 
+/**
+ * Nacos服务注册
+ */
 @Slf4j
 public class NacosServiceRegistry implements ServiceRegistry {
+    /**
+     * 注册服务
+     *
+     * @param serviceName       服务名称
+     * @param inetSocketAddress 提供服务的地址
+     */
     @Override
     public void register(String serviceName, InetSocketAddress inetSocketAddress) {
         try {

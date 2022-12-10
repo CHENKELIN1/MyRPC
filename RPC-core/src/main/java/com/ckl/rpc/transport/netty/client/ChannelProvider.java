@@ -18,23 +18,39 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * TODO
+ * 用于获取 Channel 对象
+ */
 @Slf4j
 public class ChannelProvider {
     private static EventLoopGroup eventLoopGroup;
     private static Bootstrap bootstrap = initializeBootstrap();
-
+    //    存储channel对象
     private static Map<String, Channel> channels = new ConcurrentHashMap<>();
 
+    /**
+     * 获取channel对象
+     *
+     * @param inetSocketAddress socket地址
+     * @param serializer        序列化方式
+     * @return channel
+     * @throws InterruptedException
+     */
     public static Channel get(InetSocketAddress inetSocketAddress, CommonSerializer serializer) throws InterruptedException {
+//        得到channel key
         String key = inetSocketAddress.toString() + serializer.getCode();
         if (channels.containsKey(key)) {
             Channel channel = channels.get(key);
             if (channels != null && channel.isActive()) {
+                //            若有channel并且活跃则返回
                 return channel;
             } else {
+//                若失效，则删除记录
                 channels.remove(key);
             }
         }
+//        创建bootstrap
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) {
@@ -48,15 +64,27 @@ public class ChannelProvider {
         });
         Channel channel = null;
         try {
+//            连接客户端
             channel = connect(bootstrap, inetSocketAddress);
         } catch (ExecutionException e) {
             log.error("连接客户端时有错误发生", e);
             return null;
         }
+//        保存记录
         channels.put(key, channel);
+//        返回连接
         return channel;
     }
 
+    /**
+     * 客户端连接
+     *
+     * @param bootstrap
+     * @param inetSocketAddress socket地址
+     * @return channel
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     private static Channel connect(Bootstrap bootstrap, InetSocketAddress inetSocketAddress) throws ExecutionException, InterruptedException {
         CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
         bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener) future -> {
@@ -70,6 +98,11 @@ public class ChannelProvider {
         return completableFuture.get();
     }
 
+    /**
+     * 初始化bootstrap
+     *
+     * @return
+     */
     private static Bootstrap initializeBootstrap() {
         eventLoopGroup = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();

@@ -5,6 +5,9 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * 随机负载均衡策略
+ */
 public class RandomLoadBalancer implements LoadBalancer {
 
     @Override

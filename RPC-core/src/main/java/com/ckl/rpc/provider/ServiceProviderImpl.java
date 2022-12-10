@@ -5,22 +5,38 @@ import com.ckl.rpc.exception.RpcException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 服务提供者实现
+ */
 @Slf4j
 public class ServiceProviderImpl implements ServiceProvider {
+    //    存储服务名与提供服务的对象的对应关系
     private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
-    private static final Set<String> registeredService = ConcurrentHashMap.newKeySet();
 
+    /**
+     * 添加服务提供者
+     *
+     * @param service     服务提供对象
+     * @param serviceName 服务名称
+     * @param <T>
+     */
     @Override
     public <T> void addServiceProvider(T service, String serviceName) {
-        if (registeredService.contains(serviceName)) return;
-        registeredService.add(serviceName);
+//        已被注册，则跳过
+        if (serviceMap.containsKey(serviceName)) return;
+//        添加映射关系到map
         serviceMap.put(serviceName, service);
         log.info("向接口: {} 注册服务: {}", service.getClass().getInterfaces(), serviceName);
     }
 
+    /**
+     * 获取服务对象
+     *
+     * @param serviceName 服务名称
+     * @return
+     */
     @Override
     public Object getServiceProvider(String serviceName) {
         Object service = serviceMap.get(serviceName);

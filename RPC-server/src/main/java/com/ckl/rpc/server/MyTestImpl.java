@@ -1,12 +1,11 @@
-package com.ckl.rpc.serviceImpl;
+package com.ckl.rpc.server;
 
-import com.ckl.rpc.annotation.Service;
 import com.ckl.rpc.api.MyTest;
 
 /**
  * MyTest接口实现
  */
-@Service
+//@Service
 public class MyTestImpl implements MyTest {
     @Override
     public String getData() {

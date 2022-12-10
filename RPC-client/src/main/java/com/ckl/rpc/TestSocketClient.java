@@ -26,9 +26,5 @@ public class TestSocketClient {
         MyTest myTest = rpcClientProxy.getProxy(MyTest.class);
         String res2 = myTest.getData();
         System.out.println(res2);
-        for (int i = 0; i < 20; i++) {
-            String res1 = helloService.hello(helloObject);
-            System.out.println(res1);
-        }
     }
 }

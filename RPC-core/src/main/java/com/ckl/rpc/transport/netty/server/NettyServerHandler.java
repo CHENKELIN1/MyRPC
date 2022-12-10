@@ -12,10 +12,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;
 
+/**
+ * Netty服务器处理器
+ */
 @Slf4j
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
+    //    线程名前缀
     private static final String THREAD_NAME_PREFIX = "netty-server-handler";
+    //    线程池
     private final ExecutorService threadPool;
+    //    请求处理器
     private final RequestHandler requestHandler;
 
     public NettyServerHandler() {
@@ -23,16 +29,29 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         this.threadPool = ThreadPoolFactory.createDefaultThreadPool(THREAD_NAME_PREFIX);
     }
 
+    /**
+     * Netty内部调用
+     * TODO
+     *
+     * @param ctx
+     * @param msg
+     * @throws Exception
+     */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception {
         try {
+//            获取心跳
             if (msg.getHeartBeat()) {
                 log.info("接收到客户端心跳包...");
                 return;
             }
+//            接收到请求
             log.info("服务器接收到请求: {}", msg);
+//            处理请求得到结果
             Object result = requestHandler.handle(msg);
+//          若通道可写
             if (ctx.channel().isActive() && ctx.channel().isWritable()) {
+//                写入响应数据
                 ctx.writeAndFlush(RpcResponse.success(result, msg.getRequestId()));
             } else {
                 log.error("通道不可写");
@@ -42,6 +61,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         }
     }
 
+    /**
+     * 异常处理方式
+     *
+     * @param ctx
+     * @param cause
+     * @throws Exception
+     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.error("处理过程调用时有错误发生:");

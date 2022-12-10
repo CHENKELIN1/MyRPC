@@ -1,9 +1,7 @@
 package com.ckl.rpc.transport.socket.client;
 
-import com.ckl.rpc.transport.RpcClient;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
-import com.ckl.rpc.enumeration.ResponseCode;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.loadbalancer.LoadBalancer;
@@ -11,6 +9,7 @@ import com.ckl.rpc.loadbalancer.RandomLoadBalancer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
 import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.transport.RpcClient;
 import com.ckl.rpc.transport.socket.util.ObjectReader;
 import com.ckl.rpc.transport.socket.util.ObjectWriter;
 import com.ckl.rpc.util.RpcMessageChecker;
@@ -22,10 +21,14 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+/**
+ * Socket客户端
+ */
 @Slf4j
 public class SocketClient implements RpcClient {
+    //    服务发现者
     private final ServiceDiscovery serviceDiscovery;
-
+    //    序列化方式
     private final CommonSerializer serializer;
 
     public SocketClient() {
@@ -45,28 +48,32 @@ public class SocketClient implements RpcClient {
         this.serializer = CommonSerializer.getByCode(serializer);
     }
 
+    /**
+     * 发送消息
+     *
+     * @param rpcRequest
+     * @return
+     */
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
+//        序列化器检查
         if (serializer == null) {
             log.error("未设置序列化器");
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
+//        查询服务socket地址
         InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
+//        创建socket连接
         try (Socket socket = new Socket()) {
             socket.connect(inetSocketAddress);
             OutputStream outputStream = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
+//            写入数据
             ObjectWriter.writeObject(outputStream, rpcRequest, serializer);
+//            读出响应数据
             Object obj = ObjectReader.readObject(inputStream);
             RpcResponse rpcResponse = (RpcResponse) obj;
-            if (rpcResponse == null) {
-                log.error("服务调用失败，service：{}", rpcRequest.getInterfaceName());
-                throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service:" + rpcRequest.getInterfaceName());
-            }
-            if (rpcResponse.getCode() == null || rpcResponse.getCode() != ResponseCode.SUCCESS.getCode()) {
-                log.error("调用服务失败, service: {}, response:{}", rpcRequest.getInterfaceName(), rpcResponse);
-                throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service:" + rpcRequest.getInterfaceName());
-            }
+//            响应检查
             RpcMessageChecker.check(rpcRequest, rpcResponse);
             return rpcResponse;
         } catch (IOException e) {
