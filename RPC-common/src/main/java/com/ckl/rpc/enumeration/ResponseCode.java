@@ -3,7 +3,9 @@ package com.ckl.rpc.enumeration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
+/**
+ * 响应状态码
+ */
 @AllArgsConstructor
 @Getter
 public enum ResponseCode {

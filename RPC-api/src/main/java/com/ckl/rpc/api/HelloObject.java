@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * 自定义测试接口相关类
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

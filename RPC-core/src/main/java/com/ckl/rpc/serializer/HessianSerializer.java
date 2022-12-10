@@ -10,6 +10,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Hessian序列化器
+ */
 @Slf4j
 public class HessianSerializer implements CommonSerializer {
     @Override

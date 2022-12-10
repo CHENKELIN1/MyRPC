@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
+/**
+ * JSON序列化器
+ */
 @Slf4j
 public class JsonSerializer implements CommonSerializer {
     private ObjectMapper objectMapper = new ObjectMapper();
