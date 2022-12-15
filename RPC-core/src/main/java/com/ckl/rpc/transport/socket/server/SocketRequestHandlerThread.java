@@ -4,8 +4,8 @@ import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.handler.RequestHandler;
 import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.transport.socket.util.ObjectReader;
-import com.ckl.rpc.transport.socket.util.ObjectWriter;
+import com.ckl.rpc.codec.SocketDecoder;
+import com.ckl.rpc.codec.SocketEncoder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -40,13 +40,13 @@ public class SocketRequestHandlerThread implements Runnable {
         try (InputStream inputStream = socket.getInputStream();
              OutputStream outputStream = socket.getOutputStream()) {
 //            读取输入
-            RpcRequest rpcRequest = (RpcRequest) ObjectReader.readObject(inputStream);
+            RpcRequest rpcRequest = (RpcRequest) SocketDecoder.readObject(inputStream);
 //            处理Rpc请求
             Object result = requestHandler.handle(rpcRequest);
 //            响应请求
             RpcResponse<Object> response = RpcResponse.success(result, rpcRequest.getRequestId());
 //            将请求写入输出流
-            ObjectWriter.writeObject(outputStream, response, serializer);
+            SocketEncoder.writeObject(outputStream, response, serializer);
         } catch (IOException e) {
             log.error("调用或发送时有错误发生：", e);
         }

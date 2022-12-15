@@ -10,8 +10,8 @@ import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
 import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.transport.RpcClient;
-import com.ckl.rpc.transport.socket.util.ObjectReader;
-import com.ckl.rpc.transport.socket.util.ObjectWriter;
+import com.ckl.rpc.codec.SocketDecoder;
+import com.ckl.rpc.codec.SocketEncoder;
 import com.ckl.rpc.util.RpcMessageChecker;
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,9 +69,9 @@ public class SocketClient implements RpcClient {
             OutputStream outputStream = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
 //            写入数据
-            ObjectWriter.writeObject(outputStream, rpcRequest, serializer);
+            SocketEncoder.writeObject(outputStream, rpcRequest, serializer);
 //            读出响应数据
-            Object obj = ObjectReader.readObject(inputStream);
+            Object obj = SocketDecoder.readObject(inputStream);
             RpcResponse rpcResponse = (RpcResponse) obj;
 //            响应检查
             RpcMessageChecker.check(rpcRequest, rpcResponse);

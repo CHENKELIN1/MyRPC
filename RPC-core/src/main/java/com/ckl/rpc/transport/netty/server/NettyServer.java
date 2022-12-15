@@ -1,8 +1,8 @@
 package com.ckl.rpc.transport.netty.server;
 
 import com.ckl.rpc.transport.AbstractRpcServer;
-import com.ckl.rpc.codec.CommonDecoder;
-import com.ckl.rpc.codec.CommonEncoder;
+import com.ckl.rpc.codec.NettyDecoder;
+import com.ckl.rpc.codec.NettyEncoder;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
@@ -65,9 +65,9 @@ public class NettyServer extends AbstractRpcServer {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS))
 //                                    添加编码器
-                                    .addLast(new CommonEncoder(serializer))
+                                    .addLast(new NettyEncoder(serializer))
 //                                    添加解码器
-                                    .addLast(new CommonDecoder())
+                                    .addLast(new NettyDecoder())
 //                                    添加Netty客户端处理器
                                     .addLast(new NettyServerHandler());
                         }
