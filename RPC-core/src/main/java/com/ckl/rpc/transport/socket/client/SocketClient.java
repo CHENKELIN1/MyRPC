@@ -1,8 +1,11 @@
 package com.ckl.rpc.transport.socket.client;
 
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.enumeration.LoadBalanceType;
 import com.ckl.rpc.enumeration.RpcError;
+import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.loadbalancer.LoadBalancer;
 import com.ckl.rpc.loadbalancer.RandomLoadBalancer;
@@ -25,27 +28,27 @@ import java.net.Socket;
  * Socket客户端
  */
 @Slf4j
-public class SocketClient implements RpcClient {
+public class SocketClient implements RpcClient, DefaultConfig {
     //    服务发现者
     private final ServiceDiscovery serviceDiscovery;
     //    序列化方式
     private final CommonSerializer serializer;
 
     public SocketClient() {
-        this(DEFAULT_SERIALIZER, new RandomLoadBalancer());
+        this(DEFAULT_SERIALIZER,DEFAULT_LOAD_BALANCE);
     }
 
-    public SocketClient(LoadBalancer loadBalancer) {
+    public SocketClient(LoadBalanceType loadBalancer) {
         this(DEFAULT_SERIALIZER, loadBalancer);
     }
 
-    public SocketClient(Integer serializer) {
-        this(serializer, new RandomLoadBalancer());
+    public SocketClient(SerializerCode serializer) {
+        this(serializer,DEFAULT_LOAD_BALANCE );
     }
 
-    public SocketClient(Integer serializer, LoadBalancer loadBalancer) {
-        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
-        this.serializer = CommonSerializer.getByCode(serializer);
+    public SocketClient(SerializerCode serializer, LoadBalanceType loadBalancer) {
+        this.serviceDiscovery = new NacosServiceDiscovery(LoadBalancer.getByType(loadBalancer));
+        this.serializer = CommonSerializer.getByType(serializer);
     }
 
     /**

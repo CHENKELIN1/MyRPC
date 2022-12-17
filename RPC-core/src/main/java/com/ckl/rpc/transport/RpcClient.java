@@ -7,7 +7,6 @@ import com.ckl.rpc.serializer.CommonSerializer;
  * Rpc客户端
  */
 public interface RpcClient {
-    int DEFAULT_SERIALIZER = CommonSerializer.KRYO_SERIALIZER;
 
     /**
      * 发送请求

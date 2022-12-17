@@ -1,5 +1,7 @@
 package com.ckl.rpc.serializer;
 
+import com.ckl.rpc.enumeration.SerializerCode;
+
 /**
  * 序列化接口
  */
@@ -40,6 +42,18 @@ public interface CommonSerializer {
             case 1:
                 return new JsonSerializer();
             case 2:
+                return new HessianSerializer();
+            default:
+                return null;
+        }
+    }
+    static CommonSerializer getByType(SerializerCode code) {
+        switch (code) {
+            case KRYO:
+                return new KryoSerializer();
+            case JSON:
+                return new JsonSerializer();
+            case HESSIAN:
                 return new HessianSerializer();
             default:
                 return null;

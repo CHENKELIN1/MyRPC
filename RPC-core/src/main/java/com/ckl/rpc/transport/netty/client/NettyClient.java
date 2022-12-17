@@ -1,5 +1,8 @@
 package com.ckl.rpc.transport.netty.client;
 
+import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.enumeration.LoadBalanceType;
+import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.transport.RpcClient;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
@@ -27,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
  * TODO
  */
 @Slf4j
-public class NettyClient implements RpcClient {
+public class NettyClient implements RpcClient, DefaultConfig {
     private static final EventLoopGroup group;
     private static final Bootstrap bootstrap;
 
@@ -46,20 +49,20 @@ public class NettyClient implements RpcClient {
     private final UnprocessedRequests unprocessedRequests;
 
     public NettyClient() {
-        this(DEFAULT_SERIALIZER, new RandomLoadBalancer());
+        this(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE);
     }
 
-    public NettyClient(LoadBalancer loadBalancer) {
+    public NettyClient(LoadBalanceType loadBalancer) {
         this(DEFAULT_SERIALIZER, loadBalancer);
     }
 
-    public NettyClient(Integer serializer) {
-        this(serializer, new RandomLoadBalancer());
+    public NettyClient(SerializerCode serializer) {
+        this(serializer, DEFAULT_LOAD_BALANCE);
     }
 
-    public NettyClient(Integer serializer, LoadBalancer loadBalancer) {
-        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
-        this.serializer = CommonSerializer.getByCode(serializer);
+    public NettyClient(SerializerCode serializer, LoadBalanceType loadBalancer) {
+        this.serviceDiscovery = new NacosServiceDiscovery(LoadBalancer.getByType(loadBalancer));
+        this.serializer = CommonSerializer.getByType(serializer);
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
 

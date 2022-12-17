@@ -1,6 +1,8 @@
 package com.ckl.rpc.bean;
 
 import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.enumeration.LoadBalanceType;
+import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.loadbalancer.LoadBalancer;
 import com.ckl.rpc.loadbalancer.RandomLoadBalancer;
 import com.ckl.rpc.loadbalancer.RoundRobinLoadBalancer;
@@ -25,24 +27,10 @@ public class BeanFactory implements DefaultConfig{
      static {
          log.info("初始化BeanFactory...");
         contianer=new HashMap<>();
-        LoadBalancer loadBalancer;
-        CommonSerializer serializer;
         RpcClient rpcClient;
-        switch (DEFAULT_SERIALIZER){
-            case JSON:serializer=new JsonSerializer();break;
-            case KRYO:serializer=new KryoSerializer();break;
-            case HESSIAN:serializer=new HessianSerializer();break;
-            default:serializer=new HessianSerializer();
-        }
-        switch (DEFAULT_LOAD_BALANCE){
-            case LOAD_BALANCE_ROUND:loadBalancer=new RoundRobinLoadBalancer();break;
-            case LOAD_BALANCE_RANDOM:loadBalancer=new RandomLoadBalancer();break;
-            default:loadBalancer=new RandomLoadBalancer();
-        }
         switch (DEFAULT_TRANSMISSION){
-            case NETTY:rpcClient=new NettyClient(serializer.getCode(),loadBalancer);break;
-            case SOCKET:rpcClient=new SocketClient(serializer.getCode(),loadBalancer);break;
-            default:rpcClient=new NettyClient(serializer.getCode(),loadBalancer);break;
+            case SOCKET:rpcClient=new SocketClient();break;
+            default:rpcClient=new NettyClient();break;
         }
         rpcClientProxy=new RpcClientProxy(rpcClient);
     }
