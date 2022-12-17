@@ -32,7 +32,6 @@ public class ProtocolHandler {
             log.error("不识别的反序列化器: {}", protocol.getSerializerCode());
             throw new RpcException(RpcError.UNKNOWN_SERIALIZER);
         }
-        log.info(protocol.toString());
 //        反序列化得到RpcRequest或RpcResponse对象
         return serializer.deserialize(protocol.getData(), packageClass);
     }

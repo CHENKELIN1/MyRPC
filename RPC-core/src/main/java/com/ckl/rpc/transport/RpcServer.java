@@ -1,12 +1,9 @@
 package com.ckl.rpc.transport;
 
-import com.ckl.rpc.serializer.CommonSerializer;
-
 /**
  * Rpc服务端
  */
 public interface RpcServer {
-    int DEFAULT_SERIALIZER = CommonSerializer.KRYO_SERIALIZER;
 
     /**
      * 服务端启动

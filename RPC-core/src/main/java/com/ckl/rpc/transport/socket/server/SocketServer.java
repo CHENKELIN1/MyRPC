@@ -1,5 +1,6 @@
 package com.ckl.rpc.transport.socket.server;
 
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.transport.AbstractRpcServer;
 import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.handler.RequestHandler;
@@ -19,7 +20,7 @@ import java.util.concurrent.ExecutorService;
  * Socket服务端
  */
 @Slf4j
-public class SocketServer extends AbstractRpcServer {
+public class SocketServer extends AbstractRpcServer implements DefaultConfig {
     //    线程池
     private final ExecutorService threadPool;
     //    序列化方式
@@ -28,7 +29,7 @@ public class SocketServer extends AbstractRpcServer {
     private final RequestHandler requestHandler = new RequestHandler();
 
     public SocketServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER);
+        this(host, port, DEFAULT_SERIALIZER.getCode());
     }
 
     public SocketServer(String host, int port, Integer serializer) {

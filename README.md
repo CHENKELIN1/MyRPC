@@ -86,7 +86,7 @@ Data            DataLength  传输数据
     ```java
     package com.ckl.rpc.server;
    
-    import com.ckl.rpc.annotation.Service;
+    import com.ckl.rpc.annotation.MyRpcService;
     import com.ckl.rpc.api.MyTest;
    
     @Service
@@ -101,7 +101,7 @@ Data            DataLength  传输数据
     ```java
     package com.ckl.rpc.server;
     
-    import com.ckl.rpc.annotation.ServiceScan;
+    import com.ckl.rpc.annotation.MyRpcServiceScan;
     import com.ckl.rpc.serializer.CommonSerializer;
     import com.ckl.rpc.transport.RpcServer;
     import com.ckl.rpc.transport.netty.server.NettyServer;

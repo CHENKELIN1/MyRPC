@@ -1,7 +1,7 @@
 package com.ckl.rpc.transport;
 
-import com.ckl.rpc.annotation.Service;
-import com.ckl.rpc.annotation.ServiceScan;
+import com.ckl.rpc.annotation.MyRpcService;
+import com.ckl.rpc.annotation.MyRpcServiceScan;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.provider.ServiceProvider;
@@ -33,8 +33,8 @@ public abstract class AbstractRpcServer implements RpcServer {
         Class<?> startClass;
         try {
             startClass = Class.forName(mainClassName);
-            if (!startClass.isAnnotationPresent(ServiceScan.class)) {
-                log.error("启动类缺少 @ServiceScan 注解");
+            if (!startClass.isAnnotationPresent(MyRpcServiceScan.class)) {
+                log.error("启动类缺少 @MyRpcServiceScan 注解");
                 throw new RpcException(RpcError.SERVICE_SCAN_PACKAGE_NOT_FOUND);
             }
         } catch (ClassNotFoundException e) {
@@ -42,7 +42,7 @@ public abstract class AbstractRpcServer implements RpcServer {
             throw new RpcException(RpcError.UNKNOWN_ERROR);
         }
 //        获取当前包
-        String basePackage = startClass.getAnnotation(ServiceScan.class).value();
+        String basePackage = startClass.getAnnotation(MyRpcServiceScan.class).value();
         if ("".equals(basePackage)) {
             basePackage = mainClassName.substring(0, mainClassName.lastIndexOf("."));
         }
@@ -50,9 +50,9 @@ public abstract class AbstractRpcServer implements RpcServer {
         Set<Class<?>> classSet = ReflectUtil.getClasses(basePackage);
         for (Class<?> clazz : classSet) {
 //            若包含service注解
-            if (clazz.isAnnotationPresent(Service.class)) {
+            if (clazz.isAnnotationPresent(MyRpcService.class)) {
 //                获取服务名称
-                String serviceName = clazz.getAnnotation(Service.class).name();
+                String serviceName = clazz.getAnnotation(MyRpcService.class).name();
 //                获取服务
                 Object obj;
                 try {

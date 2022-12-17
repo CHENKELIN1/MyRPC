@@ -1,12 +1,13 @@
 package com.ckl.rpc.transport.netty.server;
 
-import com.ckl.rpc.transport.AbstractRpcServer;
 import com.ckl.rpc.codec.NettyDecoder;
 import com.ckl.rpc.codec.NettyEncoder;
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
 import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.transport.AbstractRpcServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -23,12 +24,12 @@ import java.util.concurrent.TimeUnit;
  * Netty服务端
  */
 @Slf4j
-public class NettyServer extends AbstractRpcServer {
+public class NettyServer extends AbstractRpcServer implements DefaultConfig {
     //    序列化器
     private final CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER);
+        this(host, port, DEFAULT_SERIALIZER.getCode());
     }
 
     public NettyServer(String host, int port, Integer serializer) {

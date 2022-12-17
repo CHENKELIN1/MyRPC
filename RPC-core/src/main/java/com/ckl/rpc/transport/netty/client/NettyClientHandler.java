@@ -1,5 +1,6 @@
 package com.ckl.rpc.transport.netty.client;
 
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.factory.SingletonFactory;
@@ -20,7 +21,7 @@ import java.net.InetSocketAddress;
  * TODO
  */
 @Slf4j
-public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
+public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> implements DefaultConfig {
     //    未处理请求
     private final UnprocessedRequests unprocessedRequests;
 
@@ -51,7 +52,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.WRITER_IDLE) {
                 log.info("发送心跳包 [{}]", ctx.channel().remoteAddress());
-                Channel channel = ChannelProvider.get((InetSocketAddress) ctx.channel().remoteAddress(), CommonSerializer.getByCode(CommonSerializer.DEFAULT_SERIALIZER));
+                Channel channel = ChannelProvider.get((InetSocketAddress) ctx.channel().remoteAddress(), CommonSerializer.getByCode(DEFAULT_SERIALIZER.getCode()));
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setHeartBeat(true);
                 channel.writeAndFlush(rpcRequest).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);

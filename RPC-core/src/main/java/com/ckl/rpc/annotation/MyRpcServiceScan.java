@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 放在服务实现类上，表示该类提供服务
+ * 放在程序入口，表示服务扫描范围
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Service {
+public @interface MyRpcServiceScan {
 
-    public String name() default "";
+    public String value() default "";
 
 }
