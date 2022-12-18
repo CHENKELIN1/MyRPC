@@ -39,9 +39,9 @@ public abstract class AbstractRpcServer implements RpcServer {
             Class<?> startClass = Class.forName(mainClassName);
             if (!startClass.isAnnotationPresent(MyRpcServiceScan.class)) {
                 log.warn("启动类缺少 @MyRpcServiceScan 注解");
-                basePackage= DefaultConfig.DEFAULT_PACKAGE;
+                basePackage = DefaultConfig.DEFAULT_PACKAGE;
 //                throw new RpcException(RpcError.SERVICE_SCAN_PACKAGE_NOT_FOUND);
-            }else {
+            } else {
                 basePackage = startClass.getAnnotation(MyRpcServiceScan.class).value();
                 if ("".equals(basePackage)) {
                     basePackage = mainClassName.substring(0, mainClassName.lastIndexOf("."));
@@ -57,7 +57,7 @@ public abstract class AbstractRpcServer implements RpcServer {
 //            若包含service注解
             if (clazz.isAnnotationPresent(MyRpcService.class)) {
 //                获取服务名称
-                String serviceName = clazz.getAnnotation(MyRpcService.class).name();
+                String group = clazz.getAnnotation(MyRpcService.class).group();
 //                获取服务
                 Object obj;
                 try {
@@ -67,14 +67,12 @@ public abstract class AbstractRpcServer implements RpcServer {
                     continue;
                 }
 //                注册服务
-                if ("".equals(serviceName)) {
-                    Class<?>[] interfaces = clazz.getInterfaces();
-                    for (Class<?> oneInterface : interfaces) {
-                        publishService(obj, oneInterface.getCanonicalName());
-                    }
-                } else {
-                    log.info("注册服务:" + serviceName);
-                    publishService(obj, serviceName);
+                if ("".equals(group)) {
+                    group = DefaultConfig.DEFAULT_GROUP;
+                }
+                Class<?>[] interfaces = clazz.getInterfaces();
+                for (Class<?> oneInterface : interfaces) {
+                    publishService(obj, oneInterface.getCanonicalName(),group);
                 }
             }
         }
@@ -88,11 +86,11 @@ public abstract class AbstractRpcServer implements RpcServer {
      * @param <T>
      */
     @Override
-    public <T> void publishService(T service, String serviceName) {
+    public <T> void publishService(T service, String serviceName, String group) {
 //        添加服务提供者
-        serviceProvider.addServiceProvider(service, serviceName);
+        serviceProvider.addServiceProvider(service, serviceName,group);
 //        注册服务
-        serviceRegistry.register(serviceName, new InetSocketAddress(host, port));
+        serviceRegistry.register(serviceName, group, new InetSocketAddress(host, port));
     }
 
 }

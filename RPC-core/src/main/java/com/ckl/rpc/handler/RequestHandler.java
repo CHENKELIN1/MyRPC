@@ -30,7 +30,7 @@ public class RequestHandler {
      */
     public Object handle(RpcRequest rpcRequest) {
 //        根据请求获取服务对象
-        Object service = serviceProvider.getServiceProvider(rpcRequest.getInterfaceName());
+        Object service = serviceProvider.getServiceProvider(rpcRequest.getInterfaceName(),rpcRequest.getGroup());
 //        调用目标方法
         return invokeTargetMethod(rpcRequest, service);
     }

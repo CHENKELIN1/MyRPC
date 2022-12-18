@@ -2,7 +2,9 @@ package com.ckl.rpc;
 
 import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.bean.BeanFactory;
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.ServerStatusList;
+import com.ckl.rpc.enumeration.GroupName;
 import com.ckl.rpc.factory.SingletonFactory;
 
 import java.util.Random;
@@ -20,7 +22,7 @@ public class TestNettyClient2 {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    BeanFactory.getBean(MyTest.class).getData();
+                    BeanFactory.getBean(MyTest.class, DefaultConfig.DEFAULT_GROUP).getData();
                 }
             }
         }

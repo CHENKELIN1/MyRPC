@@ -4,6 +4,8 @@ import com.ckl.rpc.api.HelloObject;
 import com.ckl.rpc.api.HelloService;
 import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.bean.BeanFactory;
+import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.enumeration.GroupName;
 
 /**
  * Netty客户端测试
@@ -11,10 +13,10 @@ import com.ckl.rpc.bean.BeanFactory;
 public class TestNettyClient {
     public static void main(String[] args) {
 //        远程过程调用接口1
-        HelloService helloService = BeanFactory.getBean(HelloService.class);
+        HelloService helloService = BeanFactory.getBean(HelloService.class, DefaultConfig.DEFAULT_GROUP);
         System.out.println(helloService.hello(new HelloObject(12, "This is a message")));
 //        远程过程调用接口2
-        MyTest myTest = BeanFactory.getBean(MyTest.class);
+        MyTest myTest = BeanFactory.getBean(MyTest.class, DefaultConfig.DEFAULT_GROUP);
         System.out.println(myTest.getData());
     }
 }

@@ -1,5 +1,7 @@
 package com.ckl.rpc.transport.socket.client;
 
+import com.ckl.rpc.codec.SocketDecoder;
+import com.ckl.rpc.codec.SocketEncoder;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
@@ -8,13 +10,10 @@ import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.loadbalancer.LoadBalancer;
-import com.ckl.rpc.loadbalancer.RandomLoadBalancer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
 import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.transport.RpcClient;
-import com.ckl.rpc.codec.SocketDecoder;
-import com.ckl.rpc.codec.SocketEncoder;
 import com.ckl.rpc.util.RpcMessageChecker;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,7 +64,7 @@ public class SocketClient implements RpcClient, DefaultConfig {
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
 //        查询服务socket地址
-        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
+        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName(),rpcRequest.getGroup());
 //        创建socket连接
         try (Socket socket = new Socket()) {
             socket.connect(inetSocketAddress);
