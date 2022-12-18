@@ -1,11 +1,14 @@
 package com.ckl.rpc.factory;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * 单例工厂
  */
+@Slf4j
 public class SingletonFactory {
     private static Map<Class, Object> objectMap = new HashMap<>();
 
@@ -23,6 +26,7 @@ public class SingletonFactory {
         synchronized (clazz) {
             if (instance == null) {
                 try {
+                    log.info("创建单例:"+clazz.getCanonicalName());
                     instance = clazz.newInstance();
                     objectMap.put(clazz, instance);
                 } catch (IllegalAccessException | InstantiationException e) {

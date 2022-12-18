@@ -3,6 +3,7 @@ package com.ckl.rpc.transport.netty.server;
 import com.ckl.rpc.codec.NettyDecoder;
 import com.ckl.rpc.codec.NettyEncoder;
 import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
@@ -38,6 +39,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
+        this.serverStatus=new ServerStatus(host, port);
         scanServices();
     }
 
@@ -70,7 +72,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
 //                                    添加解码器
                                     .addLast(new NettyDecoder())
 //                                    添加Netty客户端处理器
-                                    .addLast(new NettyServerHandler());
+                                    .addLast(new NettyServerHandler(serverStatus));
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host, port).sync();

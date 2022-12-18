@@ -21,6 +21,7 @@ public interface LoadBalancer {
         switch (type){
             case LOAD_BALANCE_RANDOM:return new RandomLoadBalancer();
             case LOAD_BALANCE_ROUND:return new RoundRobinLoadBalancer();
+            case LOAD_BALANCE_ADAPTIVE:return new AdaptiveLoadBalancer();
         }
         return null;
     }

@@ -3,7 +3,9 @@ package com.ckl.rpc.transport.netty.client;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.enumeration.ResponseCode;
 import com.ckl.rpc.factory.SingletonFactory;
+import com.ckl.rpc.handler.ServerStatusHandler;
 import com.ckl.rpc.serializer.CommonSerializer;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -32,8 +34,13 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg) throws Exception {
         try {
-            log.info(String.format("客户端接收到消息: %s", msg));
-            unprocessedRequests.complete(msg);
+            ServerStatusHandler.save(msg);
+            if(msg.getCode()== ResponseCode.HEART_BEAT.getCode()){
+                log.info("收到服务器状态: "+msg.getStatus().toString());
+            }else {
+                log.info(String.format("客户端接收到消息: %s", msg));
+                unprocessedRequests.complete(msg);
+            }
         } finally {
             ReferenceCountUtil.release(msg);
         }

@@ -2,6 +2,8 @@ package com.ckl.rpc.transport;
 
 import com.ckl.rpc.annotation.MyRpcService;
 import com.ckl.rpc.annotation.MyRpcServiceScan;
+import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.provider.ServiceProvider;
@@ -25,26 +27,29 @@ public abstract class AbstractRpcServer implements RpcServer {
     protected ServiceRegistry serviceRegistry;
     //    服务提供者
     protected ServiceProvider serviceProvider;
+    //    服务器状态
+    protected ServerStatus serverStatus;
 
     //    扫描服务
     public void scanServices() {
 //        获取当前方法全名
         String mainClassName = ReflectUtil.getStackTrace();
-        Class<?> startClass;
+        String basePackage;
         try {
-            startClass = Class.forName(mainClassName);
+            Class<?> startClass = Class.forName(mainClassName);
             if (!startClass.isAnnotationPresent(MyRpcServiceScan.class)) {
-                log.error("启动类缺少 @MyRpcServiceScan 注解");
-                throw new RpcException(RpcError.SERVICE_SCAN_PACKAGE_NOT_FOUND);
+                log.warn("启动类缺少 @MyRpcServiceScan 注解");
+                basePackage= DefaultConfig.DEFAULT_PACKAGE;
+//                throw new RpcException(RpcError.SERVICE_SCAN_PACKAGE_NOT_FOUND);
+            }else {
+                basePackage = startClass.getAnnotation(MyRpcServiceScan.class).value();
+                if ("".equals(basePackage)) {
+                    basePackage = mainClassName.substring(0, mainClassName.lastIndexOf("."));
+                }
             }
         } catch (ClassNotFoundException e) {
             log.error("出现未知错误");
             throw new RpcException(RpcError.UNKNOWN_ERROR);
-        }
-//        获取当前包
-        String basePackage = startClass.getAnnotation(MyRpcServiceScan.class).value();
-        if ("".equals(basePackage)) {
-            basePackage = mainClassName.substring(0, mainClassName.lastIndexOf("."));
         }
 //        遍历当前包下所有类
         Set<Class<?>> classSet = ReflectUtil.getClasses(basePackage);

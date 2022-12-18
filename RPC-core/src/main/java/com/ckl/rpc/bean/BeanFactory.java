@@ -33,6 +33,7 @@ public class BeanFactory implements DefaultConfig{
             default:rpcClient=new NettyClient();break;
         }
         rpcClientProxy=new RpcClientProxy(rpcClient);
+        log.info("初始化完成:lb:"+DEFAULT_LOAD_BALANCE);
     }
     public static synchronized <T> T getBean(Class<T> clazz){
         String className= clazz.getCanonicalName();

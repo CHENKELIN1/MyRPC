@@ -9,4 +9,5 @@ public interface DefaultConfig {
     TransmissionType DEFAULT_TRANSMISSION= TransmissionType.NETTY;
     LoadBalanceType DEFAULT_LOAD_BALANCE = LoadBalanceType.LOAD_BALANCE_RANDOM;
     String DEFAULT_NACOS_SERVER_ADDRESS= "81.68.85.4:8850";
+    String DEFAULT_PACKAGE = "com.ckl.rpc";
 }

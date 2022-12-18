@@ -2,9 +2,11 @@ package com.ckl.rpc.transport.netty.server;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.factory.SingletonFactory;
 import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.handler.RequestHandler;
+import com.ckl.rpc.handler.ServerStatusHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
@@ -23,10 +25,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     private final ExecutorService threadPool;
     //    请求处理器
     private final RequestHandler requestHandler;
+    private final ServerStatus serverStatus;
 
-    public NettyServerHandler() {
+    public NettyServerHandler(ServerStatus serverStatus) {
         this.requestHandler = SingletonFactory.getInstance(RequestHandler.class);
         this.threadPool = ThreadPoolFactory.createDefaultThreadPool(THREAD_NAME_PREFIX);
+        this.serverStatus=serverStatus;
     }
 
     /**
@@ -40,19 +44,22 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception {
         try {
+            RpcResponse response;
+            serverStatus.addReceived();
 //            获取心跳
             if (msg.getHeartBeat()) {
                 log.info("接收到客户端心跳包...");
-                return;
-            }
+                response=RpcResponse.heartBeat(ServerStatusHandler.handle(serverStatus), msg.getRequestId());
+            } else {
 //            接收到请求
-            log.info("服务器接收到请求: {}", msg);
+                log.info("服务器接收到请求: {}", msg);
 //            处理请求得到结果
-            Object result = requestHandler.handle(msg);
+                response=RpcResponse.success(requestHandler.handle(msg), msg.getRequestId(),ServerStatusHandler.handle(serverStatus));
+            }
 //          若通道可写
             if (ctx.channel().isActive() && ctx.channel().isWritable()) {
 //                写入响应数据
-                ctx.writeAndFlush(RpcResponse.success(result, msg.getRequestId()));
+                ctx.writeAndFlush(response);
             } else {
                 log.error("通道不可写");
             }

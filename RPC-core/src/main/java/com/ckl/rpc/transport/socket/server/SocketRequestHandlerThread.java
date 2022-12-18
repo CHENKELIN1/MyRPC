@@ -2,7 +2,9 @@ package com.ckl.rpc.transport.socket.server;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.handler.RequestHandler;
+import com.ckl.rpc.handler.ServerStatusHandler;
 import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.codec.SocketDecoder;
 import com.ckl.rpc.codec.SocketEncoder;
@@ -24,11 +26,13 @@ public class SocketRequestHandlerThread implements Runnable {
     private RequestHandler requestHandler;
     //    序列化方式
     private CommonSerializer serializer;
+    private ServerStatus status;
 
-    public SocketRequestHandlerThread(Socket socket, RequestHandler requestHandler, CommonSerializer serializer) {
+    public SocketRequestHandlerThread(Socket socket, RequestHandler requestHandler, CommonSerializer serializer, ServerStatus status) {
         this.socket = socket;
         this.requestHandler = requestHandler;
         this.serializer = serializer;
+        this.status=status;
     }
 
     /**
@@ -44,7 +48,7 @@ public class SocketRequestHandlerThread implements Runnable {
 //            处理Rpc请求
             Object result = requestHandler.handle(rpcRequest);
 //            响应请求
-            RpcResponse<Object> response = RpcResponse.success(result, rpcRequest.getRequestId());
+            RpcResponse<Object> response = RpcResponse.success(result, rpcRequest.getRequestId(), ServerStatusHandler.handle(status));
 //            将请求写入输出流
             SocketEncoder.writeObject(outputStream, response, serializer);
         } catch (IOException e) {
