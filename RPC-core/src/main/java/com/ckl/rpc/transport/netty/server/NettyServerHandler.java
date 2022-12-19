@@ -42,7 +42,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
      * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) {
         try {
             RpcResponse response;
             serverStatus.addReceived();
@@ -54,7 +54,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 //            接收到请求
                 log.info("服务器接收到请求: {}", msg);
 //            处理请求得到结果
-                response=RpcResponse.success(requestHandler.handle(msg), msg.getRequestId(),ServerStatusHandler.handle(serverStatus));
+                Object result = requestHandler.handle(msg);
+                if (result instanceof RpcResponse){
+                    response= (RpcResponse) result;
+                    response.setStatus(ServerStatusHandler.handle(serverStatus));
+                }else {
+                    response=RpcResponse.success(result, msg.getRequestId(),ServerStatusHandler.handle(serverStatus));
+                }
             }
 //          若通道可写
             if (ctx.channel().isActive() && ctx.channel().isWritable()) {

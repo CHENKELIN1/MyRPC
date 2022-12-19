@@ -45,7 +45,7 @@ public class RpcResponse<T> implements Serializable {
     public static <T> RpcResponse<T> fail(ResponseCode code, String requestId) {
         RpcResponse<T> response = new RpcResponse<>();
         response.setCode(code.getCode());
-        response.setMsg(ResponseCode.FAIL.getMessage());
+        response.setMsg(code.getMessage());
         response.setRequestId(requestId);
         return response;
     }

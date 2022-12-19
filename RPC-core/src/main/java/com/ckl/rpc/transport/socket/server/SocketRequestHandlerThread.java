@@ -32,7 +32,7 @@ public class SocketRequestHandlerThread implements Runnable {
         this.socket = socket;
         this.requestHandler = requestHandler;
         this.serializer = serializer;
-        this.status=status;
+        this.status = status;
     }
 
     /**
@@ -47,8 +47,14 @@ public class SocketRequestHandlerThread implements Runnable {
             RpcRequest rpcRequest = (RpcRequest) SocketDecoder.readObject(inputStream);
 //            处理Rpc请求
             Object result = requestHandler.handle(rpcRequest);
-//            响应请求
-            RpcResponse<Object> response = RpcResponse.success(result, rpcRequest.getRequestId(), ServerStatusHandler.handle(status));
+            RpcResponse<Object> response;
+            if (result instanceof RpcResponse) {
+                response = (RpcResponse<Object>) result;
+                response.setStatus(ServerStatusHandler.handle(status));
+            } else {
+                //            响应请求
+                response = RpcResponse.success(result, rpcRequest.getRequestId(), ServerStatusHandler.handle(status));
+            }
 //            将请求写入输出流
             SocketEncoder.writeObject(outputStream, response, serializer);
         } catch (IOException e) {
