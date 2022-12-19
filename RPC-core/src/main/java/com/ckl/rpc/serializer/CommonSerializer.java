@@ -47,6 +47,7 @@ public interface CommonSerializer {
                 return null;
         }
     }
+
     static CommonSerializer getByType(SerializerCode code) {
         switch (code) {
             case KRYO:

@@ -12,5 +12,5 @@ public interface ServiceDiscovery {
      * @param serviceName 服务名称
      * @return 服务对应到socket地址
      */
-    InetSocketAddress lookupService(String serviceName,String group);
+    InetSocketAddress lookupService(String serviceName, String group);
 }

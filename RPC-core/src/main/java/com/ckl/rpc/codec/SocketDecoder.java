@@ -23,7 +23,7 @@ public class SocketDecoder {
      * @throws IOException
      */
     public static Object readObject(InputStream in) throws IOException {
-        Protocol protocol=new Protocol(in);
+        Protocol protocol = new Protocol(in);
         return ProtocolHandler.handleIn(protocol);
     }
 }

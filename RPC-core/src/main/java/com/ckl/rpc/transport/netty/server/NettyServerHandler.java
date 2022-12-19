@@ -31,7 +31,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     public NettyServerHandler(ServerStatus serverStatus) {
         this.requestHandler = SingletonFactory.getInstance(RequestHandler.class);
         this.threadPool = ThreadPoolFactory.createDefaultThreadPool(THREAD_NAME_PREFIX);
-        this.serverStatus=serverStatus;
+        this.serverStatus = serverStatus;
     }
 
     /**
@@ -50,16 +50,16 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 //            获取心跳
             if (msg.getHeartBeat()) {
                 if (DefaultConfig.SERVER_SHOW_HEART_BEAT_LOG) log.info("接收到客户端心跳包...");
-                response=RpcResponse.heartBeat(ServerStatusHandler.updateStatus(serverStatus), msg.getRequestId());
+                response = RpcResponse.heartBeat(ServerStatusHandler.updateStatus(serverStatus), msg.getRequestId());
             } else {
                 if (DefaultConfig.SERVER_SHOW_DETAIL_REQUEST_LOG) log.info("服务器接收到请求: {}", msg);
 //            处理请求得到结果
                 Object result = requestHandler.handle(msg);
-                if (result instanceof RpcResponse){
-                    response= (RpcResponse) result;
+                if (result instanceof RpcResponse) {
+                    response = (RpcResponse) result;
                     response.setStatus(ServerStatusHandler.updateStatus(serverStatus));
-                }else {
-                    response=RpcResponse.success(result, msg.getRequestId(),ServerStatusHandler.updateStatus(serverStatus));
+                } else {
+                    response = RpcResponse.success(result, msg.getRequestId(), ServerStatusHandler.updateStatus(serverStatus));
                 }
             }
 //          若通道可写

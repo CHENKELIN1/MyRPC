@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServerMonitor {
     private static Map<InetSocketAddress, ServerMonitorContent> map = new ConcurrentHashMap<>();
 
-    public synchronized void updateStatus(ServerStatus serverStatus,InetSocketAddress address) {
+    public synchronized void updateStatus(ServerStatus serverStatus, InetSocketAddress address) {
         ServerMonitorContent content = map.get(address);
         content.setServerStatus(serverStatus);
         map.put(address, content);
@@ -28,7 +28,7 @@ public class ServerMonitor {
 
     public void showAllMonitorContent() {
         for (InetSocketAddress key : map.keySet()) {
-            ServerMonitorContent serverMonitorContent=map.get(key);
+            ServerMonitorContent serverMonitorContent = map.get(key);
             serverMonitorContent.cal();
             log.info(key + ":" + map.get(key).toString());
         }
@@ -37,17 +37,19 @@ public class ServerMonitor {
     public synchronized void handleSend(InetSocketAddress address) {
         ServerMonitorContent serverMonitorContent = map.get(address);
         if (serverMonitorContent == null) {
-            serverMonitorContent = new ServerMonitorContent(0, 0, ServerHealth.NOT_CONNECT,address,new ServerStatus());
+            serverMonitorContent = new ServerMonitorContent(0, 0, ServerHealth.NOT_CONNECT, address, new ServerStatus());
         }
         serverMonitorContent.addSendCount();
         map.put(address, serverMonitorContent);
-        if (DefaultConfig.SHOW_SERVER_STATUS_LOG) log.info("发送请求:\t地址:" + address.toString() + "\t状态:" + serverMonitorContent);
+        if (DefaultConfig.SHOW_SERVER_STATUS_LOG)
+            log.info("发送请求:\t地址:" + address.toString() + "\t状态:" + serverMonitorContent);
     }
 
     public synchronized void handleReceived(InetSocketAddress address) {
         ServerMonitorContent serverMonitorContent = map.get(address);
         serverMonitorContent.addReceivedCount();
         map.put(address, serverMonitorContent);
-        if (DefaultConfig.SHOW_SERVER_STATUS_LOG) log.info("接收请求:\t地址:" + address.toString() + "\t状态:" + serverMonitorContent);
+        if (DefaultConfig.SHOW_SERVER_STATUS_LOG)
+            log.info("接收请求:\t地址:" + address.toString() + "\t状态:" + serverMonitorContent);
     }
 }

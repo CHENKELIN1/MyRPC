@@ -72,7 +72,7 @@ public abstract class AbstractRpcServer implements RpcServer {
                 }
                 Class<?>[] interfaces = clazz.getInterfaces();
                 for (Class<?> oneInterface : interfaces) {
-                    publishService(obj, oneInterface.getCanonicalName(),group);
+                    publishService(obj, oneInterface.getCanonicalName(), group);
                 }
             }
         }
@@ -88,7 +88,7 @@ public abstract class AbstractRpcServer implements RpcServer {
     @Override
     public <T> void publishService(T service, String serviceName, String group) {
 //        添加服务提供者
-        serviceProvider.addServiceProvider(service, serviceName,group);
+        serviceProvider.addServiceProvider(service, serviceName, group);
 //        注册服务
         serviceRegistry.register(serviceName, group, new InetSocketAddress(host, port));
     }

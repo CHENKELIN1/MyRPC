@@ -23,7 +23,7 @@ public class NettyDecoder extends ReplayingDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 //        协议解析
-        Protocol protocol=new Protocol(in);
+        Protocol protocol = new Protocol(in);
 //        写入处理后结果
         out.add(ProtocolHandler.handleIn(protocol));
     }

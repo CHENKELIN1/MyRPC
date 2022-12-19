@@ -5,8 +5,8 @@ import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.ResponseCode;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.status.ServerStatusHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,9 +36,9 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg) throws Exception {
         try {
             ServerStatusHandler.handleReceived(msg, (InetSocketAddress) ctx.channel().remoteAddress());
-            if(msg.getCode()== ResponseCode.HEART_BEAT.getCode()){
-                if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("收到服务器状态: "+msg.getStatus().toString());
-            }else {
+            if (msg.getCode() == ResponseCode.HEART_BEAT.getCode()) {
+                if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("收到服务器状态: " + msg.getStatus().toString());
+            } else {
                 if (DefaultConfig.CLIENT_SHOW_DETAIL_RESPONSE_LOG) log.info(String.format("客户端接收到消息: %s", msg));
                 unprocessedRequests.complete(msg);
             }
@@ -62,7 +62,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
                 SocketAddress socketAddress = ctx.channel().remoteAddress();
                 ServerStatusHandler.handleSend((InetSocketAddress) socketAddress);
                 if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("发送心跳包 [{}]", socketAddress);
-                Channel channel = ChannelProvider.get((InetSocketAddress)socketAddress, CommonSerializer.getByCode(DEFAULT_SERIALIZER.getCode()));
+                Channel channel = ChannelProvider.get((InetSocketAddress) socketAddress, CommonSerializer.getByCode(DEFAULT_SERIALIZER.getCode()));
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setHeartBeat(true);
                 channel.writeAndFlush(rpcRequest).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);

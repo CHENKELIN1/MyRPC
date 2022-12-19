@@ -8,11 +8,11 @@ import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.loadbalancer.LoadBalancer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
 import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.transport.RpcClient;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -82,7 +82,7 @@ public class NettyClient implements RpcClient, DefaultConfig {
         CompletableFuture<RpcResponse> resultFuture = new CompletableFuture<>();
         try {
 //            获取接口socket地址
-            InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName(),rpcRequest.getGroup());
+            InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName(), rpcRequest.getGroup());
 //            获取channel
             Channel channel = ChannelProvider.get(inetSocketAddress, serializer);
             if (!channel.isActive()) {
@@ -95,7 +95,8 @@ public class NettyClient implements RpcClient, DefaultConfig {
 //            使用future处理
             channel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener) future1 -> {
                 if (future1.isSuccess()) {
-                    if (DefaultConfig.CLIENT_SHOW_DETAIL_REQUEST_LOG) log.info(String.format("客户端发送消息: %s", rpcRequest));
+                    if (DefaultConfig.CLIENT_SHOW_DETAIL_REQUEST_LOG)
+                        log.info(String.format("客户端发送消息: %s", rpcRequest));
                 } else {
                     future1.channel().close();
                     resultFuture.completeExceptionally(future1.cause());

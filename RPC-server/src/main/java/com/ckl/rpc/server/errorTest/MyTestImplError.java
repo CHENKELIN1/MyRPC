@@ -11,7 +11,7 @@ import com.ckl.rpc.enumeration.GroupName;
 public class MyTestImplError implements MyTest {
     @Override
     public String getData() {
-        int a=1/0;
+        int a = 1 / 0;
         return "success";
     }
 }

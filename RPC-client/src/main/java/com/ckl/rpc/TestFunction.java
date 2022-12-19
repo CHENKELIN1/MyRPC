@@ -9,8 +9,8 @@ import com.ckl.rpc.status.ServerMonitor;
 import java.util.Random;
 
 public class TestFunction {
-    public void test(){
-        while (true){
+    public void test() {
+        while (true) {
             BeanFactory.getBean(MyTest.class, GroupName.GROUP_0).getData();
             SingletonFactory.getInstance(ServerMonitor.class).showAllMonitorContent();
             int r = new Random().nextInt() % 10;

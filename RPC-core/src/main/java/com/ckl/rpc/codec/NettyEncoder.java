@@ -43,7 +43,7 @@ public class NettyEncoder extends MessageToByteEncoder {
 //        写入int4字节对象长度
         out.writeInt(bytes.length);
 //        写入为定义协议
-        byte[] undefine=new byte[Protocol.UNDEFINED_LENGTH];
+        byte[] undefine = new byte[Protocol.UNDEFINED_LENGTH];
         out.writeBytes(undefine);
 //        写入对象数据
         out.writeBytes(bytes);

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Register{
+public class Register {
     String serviceName;
     String group;
 }

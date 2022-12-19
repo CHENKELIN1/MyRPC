@@ -2,13 +2,13 @@ package com.ckl.rpc.transport.socket.server;
 
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.ServerStatus;
-import com.ckl.rpc.transport.AbstractRpcServer;
 import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.handler.RequestHandler;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
 import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.transport.AbstractRpcServer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-        this.serverStatus=new ServerStatus();
+        this.serverStatus = new ServerStatus();
         scanServices();
     }
 
@@ -61,7 +61,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
             while ((socket = serverSocket.accept()) != null) {
                 log.info("消费者连接: {}:{}", socket.getInetAddress(), socket.getPort());
 //                使用线程池处理
-                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer,serverStatus));
+                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer, serverStatus));
             }
 //            关闭线程池
             threadPool.shutdown();

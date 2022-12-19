@@ -57,7 +57,7 @@ public class NacosUtil {
     public static void registerService(String serviceName, String group, InetSocketAddress address) throws NacosException {
         namingService.registerInstance(serviceName, group, address.getHostName(), address.getPort());
         NacosUtil.address = address;
-        serviceNames.add(new Register(serviceName,group));
+        serviceNames.add(new Register(serviceName, group));
     }
 
     /**
@@ -67,8 +67,8 @@ public class NacosUtil {
      * @return
      * @throws NacosException
      */
-    public static List<Instance> getAllInstance(String serviceName,String group) throws NacosException {
-        return namingService.getAllInstances(serviceName,group);
+    public static List<Instance> getAllInstance(String serviceName, String group) throws NacosException {
+        return namingService.getAllInstances(serviceName, group);
     }
 
     /**
@@ -82,9 +82,9 @@ public class NacosUtil {
             while (iterator.hasNext()) {
                 Register register = iterator.next();
                 try {
-                    namingService.deregisterInstance(register.getServiceName(),register.getGroup() ,host, port);
+                    namingService.deregisterInstance(register.getServiceName(), register.getGroup(), host, port);
                 } catch (NacosException e) {
-                    log.error("注销服务 {} 失败", register.getServiceName(),register.getGroup(), e);
+                    log.error("注销服务 {} 失败", register.getServiceName(), register.getGroup(), e);
                 }
             }
         }

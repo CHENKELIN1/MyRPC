@@ -29,7 +29,7 @@ public class SocketEncoder {
 //        写入数据长度
         outputStream.write(intToBytes(data.length));
 //        写入未定义协议
-        byte[] undefine=new byte[Protocol.UNDEFINED_LENGTH];
+        byte[] undefine = new byte[Protocol.UNDEFINED_LENGTH];
         outputStream.write(undefine);
         outputStream.write(data);
         outputStream.flush();

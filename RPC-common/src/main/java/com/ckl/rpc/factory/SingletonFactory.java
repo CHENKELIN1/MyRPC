@@ -26,7 +26,7 @@ public class SingletonFactory {
         synchronized (clazz) {
             if (instance == null) {
                 try {
-                    log.info("创建单例:"+clazz.getCanonicalName());
+                    log.info("创建单例:" + clazz.getCanonicalName());
                     instance = clazz.newInstance();
                     objectMap.put(clazz, instance);
                 } catch (IllegalAccessException | InstantiationException e) {

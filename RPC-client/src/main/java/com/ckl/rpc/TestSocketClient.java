@@ -4,12 +4,9 @@ import com.ckl.rpc.api.HelloObject;
 import com.ckl.rpc.api.HelloService;
 import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.bean.BeanFactory;
-import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.enumeration.GroupName;
 import com.ckl.rpc.factory.SingletonFactory;
 import com.ckl.rpc.status.ServerMonitor;
-import com.ckl.rpc.transport.RpcClientProxy;
-import com.ckl.rpc.transport.socket.client.SocketClient;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -20,7 +17,7 @@ public class TestSocketClient {
     public static void main(String[] args) {
 //         测试接口1
         HelloService helloService = BeanFactory.getBean(HelloService.class, GroupName.GROUP_0);
-        helloService.hello(new HelloObject(10,"hello socket client"));
+        helloService.hello(new HelloObject(10, "hello socket client"));
 //        测试接口2
         MyTest myTest = BeanFactory.getBean(MyTest.class, GroupName.GROUP_0);
         myTest.getData();

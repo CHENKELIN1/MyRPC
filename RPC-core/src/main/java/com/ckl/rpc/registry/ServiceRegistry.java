@@ -13,6 +13,6 @@ public interface ServiceRegistry {
      * @param group
      * @param inetSocketAddress 提供服务的地址
      */
-    void register(String serviceName,String group ,InetSocketAddress inetSocketAddress);
+    void register(String serviceName, String group, InetSocketAddress inetSocketAddress);
 
 }

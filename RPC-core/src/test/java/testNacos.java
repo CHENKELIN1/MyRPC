@@ -11,8 +11,8 @@ public class testNacos {
     @Test
     public void test1() throws NacosException {
         NamingService namingService = NacosFactory.createNamingService(DefaultConfig.DEFAULT_NACOS_SERVER_ADDRESS);
-        namingService.registerInstance("s1","a","127.0.0.1",9999);
-        namingService.registerInstance("s1","b","127.0.0.1",9998);
+        namingService.registerInstance("s1", "a", "127.0.0.1", 9999);
+        namingService.registerInstance("s1", "b", "127.0.0.1", 9998);
         List<Instance> instances = namingService.getAllInstances("s1");
         instances.forEach(System.out::println);
 

@@ -27,7 +27,7 @@ public class TestNettyServer2 {
         }
         Thread[] threads = new Thread[5];
         for (int i = 0; i < 5; i++) {
-            threads[i] = new Thread(new test(i),"t"+i);
+            threads[i] = new Thread(new test(i), "t" + i);
             threads[i].start();
         }
         threads[0].join();

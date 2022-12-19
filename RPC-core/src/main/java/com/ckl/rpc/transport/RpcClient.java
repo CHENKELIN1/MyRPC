@@ -1,7 +1,6 @@
 package com.ckl.rpc.transport;
 
 import com.ckl.rpc.entity.RpcRequest;
-import com.ckl.rpc.serializer.CommonSerializer;
 
 /**
  * Rpc客户端

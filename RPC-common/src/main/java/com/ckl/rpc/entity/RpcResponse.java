@@ -28,7 +28,7 @@ public class RpcResponse<T> implements Serializable {
      * @param requestId 请求id
      * @return RpcResponse Rpc响应体
      */
-    public static <T> RpcResponse<T> success(T data, String requestId,ServerStatus status) {
+    public static <T> RpcResponse<T> success(T data, String requestId, ServerStatus status) {
         RpcResponse<T> response = new RpcResponse<>();
         response.setCode(ResponseCode.SUCCESS.getCode());
         response.setData(data);
@@ -50,8 +50,8 @@ public class RpcResponse<T> implements Serializable {
         return response;
     }
 
-    public static <T> RpcResponse<T> heartBeat(ServerStatus status, String requestId){
-        RpcResponse<T> response=new RpcResponse<>();
+    public static <T> RpcResponse<T> heartBeat(ServerStatus status, String requestId) {
+        RpcResponse<T> response = new RpcResponse<>();
         response.setCode(ResponseCode.HEART_BEAT.getCode());
         response.setStatus(status);
         response.setRequestId(requestId);

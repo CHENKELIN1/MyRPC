@@ -24,13 +24,13 @@ public class ServiceProviderImpl implements ServiceProvider {
      * @param <T>
      */
     @Override
-    public <T> void addServiceProvider(T service, String serviceName,String group) {
+    public <T> void addServiceProvider(T service, String serviceName, String group) {
         Register register = new Register(serviceName, group);
 //        已被注册，则跳过
         if (serviceMap.containsKey(register)) return;
 //        添加映射关系到map
         serviceMap.put(register, service);
-        log.info("向接口: {} 注册服务: {}", service.getClass().getInterfaces(),new Register(serviceName,group));
+        log.info("向接口: {} 注册服务: {}", service.getClass().getInterfaces(), new Register(serviceName, group));
     }
 
     /**
@@ -40,8 +40,8 @@ public class ServiceProviderImpl implements ServiceProvider {
      * @return
      */
     @Override
-    public Object getServiceProvider(String serviceName,String group) {
-        Object service = serviceMap.get(new Register(serviceName,group));
+    public Object getServiceProvider(String serviceName, String group) {
+        Object service = serviceMap.get(new Register(serviceName, group));
         if (service == null) {
             throw new RpcException(RpcError.SERVICE_NOT_FOUND);
         }

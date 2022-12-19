@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ProtocolHandler {
-    public static Object handleIn(Protocol protocol){
+    public static Object handleIn(Protocol protocol) {
 //        不符合magicNumber
         if (protocol.getMagicNumber() != Protocol.MAGIC_NUMBER) {
             log.error("不识别的协议包: {}", protocol.getMagicNumber());

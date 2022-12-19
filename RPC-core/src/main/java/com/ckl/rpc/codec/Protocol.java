@@ -27,7 +27,7 @@ public class Protocol {
     public static final int UNDEFINED_LENGTH = 16;
     public static final int MAGIC_NUMBER = 0xCAFEBABE;
     public static final int INT_LENGTH = 4;
-    public static final int PROTOCOL_STATIC_LENGTH=32;
+    public static final int PROTOCOL_STATIC_LENGTH = 32;
 
     public Protocol(ByteBuf in) {
         this.magicNumber = in.readInt();
@@ -43,19 +43,20 @@ public class Protocol {
     public Protocol(InputStream in) throws IOException {
         byte[] buffer = new byte[INT_LENGTH];
         in.read(buffer);
-        this.magicNumber=bytesToInt(buffer);
+        this.magicNumber = bytesToInt(buffer);
         in.read(buffer);
-        this.packageCode=bytesToInt(buffer);
+        this.packageCode = bytesToInt(buffer);
         in.read(buffer);
-        this.serializerCode=bytesToInt(buffer);
+        this.serializerCode = bytesToInt(buffer);
         in.read(buffer);
-        this.dataLength=bytesToInt(buffer);
+        this.dataLength = bytesToInt(buffer);
         undefined = new byte[UNDEFINED_LENGTH];
         in.read(undefined);
-        byte[] data=new byte[this.dataLength];
+        byte[] data = new byte[this.dataLength];
         in.read(data);
-        this.data=data;
+        this.data = data;
     }
+
     public static int bytesToInt(byte[] src) {
         int value;
         value = ((src[0] & 0xFF) << 24)

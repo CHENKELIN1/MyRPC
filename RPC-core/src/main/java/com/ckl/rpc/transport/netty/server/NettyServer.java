@@ -19,8 +19,6 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Netty服务端
  */
@@ -39,7 +37,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-        this.serverStatus=new ServerStatus();
+        this.serverStatus = new ServerStatus();
         scanServices();
     }
 

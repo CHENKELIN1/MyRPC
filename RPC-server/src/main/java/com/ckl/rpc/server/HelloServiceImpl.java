@@ -3,7 +3,6 @@ package com.ckl.rpc.server;
 import com.ckl.rpc.annotation.MyRpcService;
 import com.ckl.rpc.api.HelloObject;
 import com.ckl.rpc.api.HelloService;
-import com.ckl.rpc.api.MyTest;
 import lombok.extern.slf4j.Slf4j;
 
 /**
