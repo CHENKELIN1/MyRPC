@@ -18,5 +18,8 @@ public class TestNettyClient {
 //        远程过程调用接口2
         MyTest myTest = BeanFactory.getBean(MyTest.class, DefaultConfig.DEFAULT_GROUP);
         System.out.println(myTest.getData());
+//        远程过程调用接口2(错误实例)
+        MyTest myTest2 = BeanFactory.getBean(MyTest.class, GroupName.GROUP_1);
+        System.out.println(myTest2.getData());
     }
 }
