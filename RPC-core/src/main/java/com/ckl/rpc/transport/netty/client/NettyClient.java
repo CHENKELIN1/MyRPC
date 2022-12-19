@@ -8,6 +8,7 @@ import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.factory.SingletonFactory;
+import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.loadbalancer.LoadBalancer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
@@ -88,12 +89,13 @@ public class NettyClient implements RpcClient, DefaultConfig {
                 group.shutdownGracefully();
                 return null;
             }
+            ServerStatusHandler.handleSend(inetSocketAddress);
 //            将请求放入未处理请求容器中
             unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);
 //            使用future处理
             channel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener) future1 -> {
                 if (future1.isSuccess()) {
-                    log.info(String.format("客户端发送消息: %s", rpcRequest.toString()));
+                    if (DefaultConfig.CLIENT_SHOW_DETAIL_REQUEST_LOG) log.info(String.format("客户端发送消息: %s", rpcRequest));
                 } else {
                     future1.channel().close();
                     resultFuture.completeExceptionally(future1.cause());

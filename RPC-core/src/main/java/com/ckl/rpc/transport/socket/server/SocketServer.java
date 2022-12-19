@@ -40,7 +40,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-        this.serverStatus=new ServerStatus(host, port);
+        this.serverStatus=new ServerStatus();
         scanServices();
     }
 

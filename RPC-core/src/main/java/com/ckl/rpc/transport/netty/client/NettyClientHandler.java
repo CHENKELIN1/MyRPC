@@ -5,7 +5,7 @@ import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.ResponseCode;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.handler.ServerStatusHandler;
+import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.serializer.CommonSerializer;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -17,6 +17,7 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 /**
  * Netty客户端处理器
@@ -34,11 +35,11 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg) throws Exception {
         try {
-            ServerStatusHandler.save(msg);
+            ServerStatusHandler.handleReceived(msg, (InetSocketAddress) ctx.channel().remoteAddress());
             if(msg.getCode()== ResponseCode.HEART_BEAT.getCode()){
-                log.info("收到服务器状态: "+msg.getStatus().toString());
+                if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("收到服务器状态: "+msg.getStatus().toString());
             }else {
-                log.info(String.format("客户端接收到消息: %s", msg));
+                if (DefaultConfig.CLIENT_SHOW_DETAIL_RESPONSE_LOG) log.info(String.format("客户端接收到消息: %s", msg));
                 unprocessedRequests.complete(msg);
             }
         } finally {
@@ -58,8 +59,10 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.WRITER_IDLE) {
-                log.info("发送心跳包 [{}]", ctx.channel().remoteAddress());
-                Channel channel = ChannelProvider.get((InetSocketAddress) ctx.channel().remoteAddress(), CommonSerializer.getByCode(DEFAULT_SERIALIZER.getCode()));
+                SocketAddress socketAddress = ctx.channel().remoteAddress();
+                ServerStatusHandler.handleSend((InetSocketAddress) socketAddress);
+                if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("发送心跳包 [{}]", socketAddress);
+                Channel channel = ChannelProvider.get((InetSocketAddress)socketAddress, CommonSerializer.getByCode(DEFAULT_SERIALIZER.getCode()));
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setHeartBeat(true);
                 channel.writeAndFlush(rpcRequest).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);

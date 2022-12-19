@@ -2,12 +2,12 @@ package com.ckl.rpc.transport.socket.server;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
-import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.handler.RequestHandler;
-import com.ckl.rpc.handler.ServerStatusHandler;
 import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.codec.SocketDecoder;
 import com.ckl.rpc.codec.SocketEncoder;
+import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.status.ServerStatusHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -50,10 +50,10 @@ public class SocketRequestHandlerThread implements Runnable {
             RpcResponse<Object> response;
             if (result instanceof RpcResponse) {
                 response = (RpcResponse<Object>) result;
-                response.setStatus(ServerStatusHandler.handle(status));
+                response.setStatus(ServerStatusHandler.updateStatus(status));
             } else {
                 //            响应请求
-                response = RpcResponse.success(result, rpcRequest.getRequestId(), ServerStatusHandler.handle(status));
+                response = RpcResponse.success(result, rpcRequest.getRequestId(), ServerStatusHandler.updateStatus(status));
             }
 //            将请求写入输出流
             SocketEncoder.writeObject(outputStream, response, serializer);

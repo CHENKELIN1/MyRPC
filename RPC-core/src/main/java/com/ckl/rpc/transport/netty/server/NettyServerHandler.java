@@ -1,12 +1,13 @@
 package com.ckl.rpc.transport.netty.server;
 
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.factory.SingletonFactory;
 import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.handler.RequestHandler;
-import com.ckl.rpc.handler.ServerStatusHandler;
+import com.ckl.rpc.status.ServerStatusHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
@@ -48,18 +49,17 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
             serverStatus.addReceived();
 //            获取心跳
             if (msg.getHeartBeat()) {
-                log.info("接收到客户端心跳包...");
-                response=RpcResponse.heartBeat(ServerStatusHandler.handle(serverStatus), msg.getRequestId());
+                if (DefaultConfig.SERVER_SHOW_HEART_BEAT_LOG) log.info("接收到客户端心跳包...");
+                response=RpcResponse.heartBeat(ServerStatusHandler.updateStatus(serverStatus), msg.getRequestId());
             } else {
-//            接收到请求
-                log.info("服务器接收到请求: {}", msg);
+                if (DefaultConfig.SERVER_SHOW_DETAIL_REQUEST_LOG) log.info("服务器接收到请求: {}", msg);
 //            处理请求得到结果
                 Object result = requestHandler.handle(msg);
                 if (result instanceof RpcResponse){
                     response= (RpcResponse) result;
-                    response.setStatus(ServerStatusHandler.handle(serverStatus));
+                    response.setStatus(ServerStatusHandler.updateStatus(serverStatus));
                 }else {
-                    response=RpcResponse.success(result, msg.getRequestId(),ServerStatusHandler.handle(serverStatus));
+                    response=RpcResponse.success(result, msg.getRequestId(),ServerStatusHandler.updateStatus(serverStatus));
                 }
             }
 //          若通道可写

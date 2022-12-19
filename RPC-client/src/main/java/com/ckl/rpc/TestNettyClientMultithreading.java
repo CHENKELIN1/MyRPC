@@ -3,13 +3,12 @@ package com.ckl.rpc;
 import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.bean.BeanFactory;
 import com.ckl.rpc.config.DefaultConfig;
-import com.ckl.rpc.entity.ServerStatusList;
-import com.ckl.rpc.enumeration.GroupName;
+import com.ckl.rpc.status.ServerMonitor;
 import com.ckl.rpc.factory.SingletonFactory;
 
 import java.util.Random;
 
-public class TestNettyClient2 {
+public class TestNettyClientMultithreading {
     public static void main(String[] args) throws InterruptedException {
         class test implements Runnable{
 
@@ -33,7 +32,7 @@ public class TestNettyClient2 {
         }
         while (true){
             Thread.sleep(1000*5);
-            SingletonFactory.getInstance(ServerStatusList.class).showData();
+            SingletonFactory.getInstance(ServerMonitor.class).showAllMonitorContent();
         }
     }
 }

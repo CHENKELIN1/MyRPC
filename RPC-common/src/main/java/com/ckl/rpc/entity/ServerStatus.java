@@ -1,27 +1,21 @@
 package com.ckl.rpc.entity;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 
 @Data
+@Accessors(chain = true)
 public class ServerStatus implements Serializable {
     private int receivedCount;
-    private int failCount;
     private double cpuLoad;
-    private String host;
-    private int port;
 
-    public ServerStatus(){
-
-    }
-    public ServerStatus(String host,int port) {
+    public ServerStatus() {
         OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();
         this.cpuLoad = osmxb.getSystemLoadAverage();
-        this.host=host;
-        this.port=port;
     }
 
 
@@ -29,9 +23,6 @@ public class ServerStatus implements Serializable {
         this.receivedCount++;
     }
 
-    public void addFail() {
-        this.failCount++;
-    }
 
     public void flushData() {
         OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();

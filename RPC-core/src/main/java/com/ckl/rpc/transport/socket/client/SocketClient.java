@@ -9,6 +9,7 @@ import com.ckl.rpc.enumeration.LoadBalanceType;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.loadbalancer.LoadBalancer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
@@ -68,6 +69,7 @@ public class SocketClient implements RpcClient, DefaultConfig {
 //        创建socket连接
         try (Socket socket = new Socket()) {
             socket.connect(inetSocketAddress);
+            ServerStatusHandler.handleSend(inetSocketAddress);
             OutputStream outputStream = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
 //            写入数据
@@ -77,6 +79,7 @@ public class SocketClient implements RpcClient, DefaultConfig {
             RpcResponse rpcResponse = (RpcResponse) obj;
 //            响应检查
             RpcMessageChecker.check(rpcRequest, rpcResponse);
+            ServerStatusHandler.handleReceived(rpcResponse,inetSocketAddress);
             return rpcResponse;
         } catch (IOException e) {
             log.error("调用时有错误发生：", e);

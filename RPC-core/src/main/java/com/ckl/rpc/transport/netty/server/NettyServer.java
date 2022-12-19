@@ -39,7 +39,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
-        this.serverStatus=new ServerStatus(host, port);
+        this.serverStatus=new ServerStatus();
         scanServices();
     }
 
@@ -66,7 +66,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS))
+                            pipeline.addLast(new IdleStateHandler(NETTY_READER_IDLE_TIME, NETTY_WRITER_IDLE_TIME, NETTY_ALL_IDLE_TIME, NETTY_IDLE_TIME_UNIT))
 //                                    添加编码器
                                     .addLast(new NettyEncoder(serializer))
 //                                    添加解码器
