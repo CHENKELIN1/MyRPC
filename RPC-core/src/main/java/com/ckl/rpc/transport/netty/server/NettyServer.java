@@ -6,6 +6,7 @@ import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.enumeration.LimiterType;
 import com.ckl.rpc.hook.ShutdownHook;
+import com.ckl.rpc.limiter.CounterLimitHandler;
 import com.ckl.rpc.limiter.LimitHandler;
 import com.ckl.rpc.limiter.Limiter;
 import com.ckl.rpc.provider.ServiceProviderImpl;
@@ -31,17 +32,17 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
     private final CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER.getCode(),DEFAULT_LIMITER);
+        this(host, port, DEFAULT_SERIALIZER.getCode(),new CounterLimitHandler(SERVER_LIMIT_COUNT));
     }
 
-    public NettyServer(String host, int port, Integer serializer, LimiterType limiterType) {
+    public NettyServer(String host, int port, Integer serializer, LimitHandler handler) {
         this.host = host;
         this.port = port;
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
         this.serverStatus = new ServerStatus();
-        this.limiter= LimitHandler.getInstance(limiterType);
+        this.limiter= new Limiter(handler);
         scanServices();
     }
 

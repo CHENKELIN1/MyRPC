@@ -1,6 +1,7 @@
 package com.ckl.rpc.bean;
 
 import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.limiter.CounterLimitHandler;
 import com.ckl.rpc.transport.RpcClient;
 import com.ckl.rpc.transport.RpcClientProxy;
 import com.ckl.rpc.transport.netty.client.NettyClient;
@@ -23,7 +24,7 @@ public class BeanFactory implements DefaultConfig {
                 rpcClient = new NettyClient();
                 break;
         }
-        rpcClientProxy = new RpcClientProxy(rpcClient);
+        rpcClientProxy = new RpcClientProxy(rpcClient,new CounterLimitHandler(CLIENT_LIMIT_COUNT));
         log.info("初始化完成:lb:" + DEFAULT_LOAD_BALANCE);
     }
 

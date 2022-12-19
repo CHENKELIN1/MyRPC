@@ -41,7 +41,8 @@ public interface DefaultConfig {
     boolean CLIENT_SHOW_HEART_BEAT_LOG = false;
     boolean SHOW_SERVER_STATUS_LOG = false;
     /*
-    * limiter config
-    * */
-    LimiterType DEFAULT_LIMITER = LimiterType.COUNTER;
+     * limiter config
+     * */
+    int SERVER_LIMIT_COUNT = 5;
+    int CLIENT_LIMIT_COUNT = 5;
 }

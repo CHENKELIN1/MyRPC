@@ -9,6 +9,11 @@ public class MyTestImpl implements MyTest {
     public String getData() {
 //        HelloService helloService = BeanFactory.getBean(HelloService.class, GroupName.GROUP_0);
 //        System.out.println(helloService.hello(new HelloObject(1, "hello myTest")));
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return "my test success!!!";
     }
 }

@@ -2,6 +2,10 @@ package com.ckl.rpc.transport;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.enumeration.RpcError;
+import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.limiter.LimitHandler;
+import com.ckl.rpc.limiter.Limiter;
 import com.ckl.rpc.transport.netty.client.NettyClient;
 import com.ckl.rpc.transport.socket.client.SocketClient;
 import com.ckl.rpc.util.RpcMessageChecker;
@@ -20,9 +24,11 @@ import java.util.concurrent.CompletableFuture;
 public class RpcClientProxy {
     //    Rpc客户端
     private final RpcClient client;
+    private final Limiter limiter;
 
-    public RpcClientProxy(RpcClient client) {
+    public RpcClientProxy(RpcClient client, LimitHandler limitHandler) {
         this.client = client;
+        this.limiter = new Limiter(limitHandler);
     }
 
     /**
@@ -45,6 +51,12 @@ public class RpcClientProxy {
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) {
+            limiter.preHandle();
+            if (!limiter.limit()){
+                log.error("客户端繁忙");
+                limiter.afterHandle();
+                throw new RpcException(RpcError.CLIENT_BUSY);
+            }
             log.info("调用方法: {}#{}", method.getDeclaringClass().getName(), method.getName());
 //        创建RpcRequest
             RpcRequest rpcRequest = new RpcRequest()
@@ -76,6 +88,7 @@ public class RpcClientProxy {
             }
 //        检查请求体与响应体
             RpcMessageChecker.check(rpcRequest, rpcResponse);
+            limiter.afterHandle();
 //        返回响应数据
             return rpcResponse.getData();
         }
