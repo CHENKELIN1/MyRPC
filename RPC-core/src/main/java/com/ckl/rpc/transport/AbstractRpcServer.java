@@ -1,9 +1,12 @@
 package com.ckl.rpc.transport;
 
-import com.ckl.rpc.annotation.Service;
-import com.ckl.rpc.annotation.ServiceScan;
+import com.ckl.rpc.annotation.MyRpcService;
+import com.ckl.rpc.annotation.MyRpcServiceScan;
+import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.limiter.Limiter;
 import com.ckl.rpc.provider.ServiceProvider;
 import com.ckl.rpc.registry.ServiceRegistry;
 import com.ckl.rpc.util.ReflectUtil;
@@ -25,34 +28,39 @@ public abstract class AbstractRpcServer implements RpcServer {
     protected ServiceRegistry serviceRegistry;
     //    服务提供者
     protected ServiceProvider serviceProvider;
+    //    服务器状态
+    protected ServerStatus serverStatus;
+    protected Limiter limiter;
 
     //    扫描服务
     public void scanServices() {
 //        获取当前方法全名
         String mainClassName = ReflectUtil.getStackTrace();
-        Class<?> startClass;
+//        获取basePackage
+        String basePackage;
         try {
-            startClass = Class.forName(mainClassName);
-            if (!startClass.isAnnotationPresent(ServiceScan.class)) {
-                log.error("启动类缺少 @ServiceScan 注解");
-                throw new RpcException(RpcError.SERVICE_SCAN_PACKAGE_NOT_FOUND);
+            Class<?> startClass = Class.forName(mainClassName);
+            if (!startClass.isAnnotationPresent(MyRpcServiceScan.class)) {
+//                log.warn("启动类缺少 @MyRpcServiceScan 注解");
+                basePackage = DefaultConfig.DEFAULT_PACKAGE;
+//                throw new RpcException(RpcError.SERVICE_SCAN_PACKAGE_NOT_FOUND);
+            } else {
+                basePackage = startClass.getAnnotation(MyRpcServiceScan.class).value();
+                if ("".equals(basePackage)) {
+                    basePackage = mainClassName.substring(0, mainClassName.lastIndexOf("."));
+                }
             }
         } catch (ClassNotFoundException e) {
             log.error("出现未知错误");
             throw new RpcException(RpcError.UNKNOWN_ERROR);
         }
-//        获取当前包
-        String basePackage = startClass.getAnnotation(ServiceScan.class).value();
-        if ("".equals(basePackage)) {
-            basePackage = mainClassName.substring(0, mainClassName.lastIndexOf("."));
-        }
 //        遍历当前包下所有类
         Set<Class<?>> classSet = ReflectUtil.getClasses(basePackage);
         for (Class<?> clazz : classSet) {
 //            若包含service注解
-            if (clazz.isAnnotationPresent(Service.class)) {
+            if (clazz.isAnnotationPresent(MyRpcService.class)) {
 //                获取服务名称
-                String serviceName = clazz.getAnnotation(Service.class).name();
+                String group = clazz.getAnnotation(MyRpcService.class).group();
 //                获取服务
                 Object obj;
                 try {
@@ -61,15 +69,13 @@ public abstract class AbstractRpcServer implements RpcServer {
                     log.error("创建 " + clazz + " 时有错误发生");
                     continue;
                 }
-//                注册服务
-                if ("".equals(serviceName)) {
-                    Class<?>[] interfaces = clazz.getInterfaces();
-                    for (Class<?> oneInterface : interfaces) {
-                        publishService(obj, oneInterface.getCanonicalName());
-                    }
-                } else {
-                    log.info("注册服务:" + serviceName);
-                    publishService(obj, serviceName);
+//                服务分组
+                if ("".equals(group)) {
+                    group = DefaultConfig.DEFAULT_GROUP;
+                }
+                Class<?>[] interfaces = clazz.getInterfaces();
+                for (Class<?> oneInterface : interfaces) {
+                    publishService(obj, oneInterface.getCanonicalName(), group);
                 }
             }
         }
@@ -83,11 +89,11 @@ public abstract class AbstractRpcServer implements RpcServer {
      * @param <T>
      */
     @Override
-    public <T> void publishService(T service, String serviceName) {
+    public <T> void publishService(T service, String serviceName, String group) {
 //        添加服务提供者
-        serviceProvider.addServiceProvider(service, serviceName);
+        serviceProvider.addServiceProvider(service, serviceName, group);
 //        注册服务
-        serviceRegistry.register(serviceName, new InetSocketAddress(host, port));
+        serviceRegistry.register(serviceName, group, new InetSocketAddress(host, port));
     }
 
 }

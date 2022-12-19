@@ -2,6 +2,10 @@ package com.ckl.rpc.transport;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.enumeration.RpcError;
+import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.limiter.LimitHandler;
+import com.ckl.rpc.limiter.Limiter;
 import com.ckl.rpc.transport.netty.client.NettyClient;
 import com.ckl.rpc.transport.socket.client.SocketClient;
 import com.ckl.rpc.util.RpcMessageChecker;
@@ -17,12 +21,15 @@ import java.util.concurrent.CompletableFuture;
  * Rpc客户端代理
  */
 @Slf4j
-public class RpcClientProxy implements InvocationHandler {
+public class RpcClientProxy {
     //    Rpc客户端
     private final RpcClient client;
+    //    限制器
+    private final Limiter limiter;
 
-    public RpcClientProxy(RpcClient client) {
+    public RpcClientProxy(RpcClient client, LimitHandler limitHandler) {
         this.client = client;
+        this.limiter = new Limiter(limitHandler);
     }
 
     /**
@@ -33,56 +40,65 @@ public class RpcClientProxy implements InvocationHandler {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T> T getProxy(Class<T> clazz) {
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, this);
+    public <T> T getProxy(Class<T> clazz, String group) {
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, new RpcClientHandler(group));
     }
 
     /**
-     * 通过动态代理调用方法
-     *
-     * @param proxy  the proxy instance that the method was invoked on
-     * @param method the {@code Method} instance corresponding to
-     *               the interface method invoked on the proxy instance.  The declaring
-     *               class of the {@code Method} object will be the interface that
-     *               the method was declared in, which may be a superinterface of the
-     *               proxy interface that the proxy class inherits the method through.
-     * @param args   an array of objects containing the values of the
-     *               arguments passed in the method invocation on the proxy instance,
-     *               or {@code null} if interface method takes no arguments.
-     *               Arguments of primitive types are wrapped in instances of the
-     *               appropriate primitive wrapper class, such as
-     *               {@code java.lang.Integer} or {@code java.lang.Boolean}.
-     * @return
+     * 客户端处理器
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) {
-        log.info("调用方法: {}#{}", method.getDeclaringClass().getName(), method.getName());
-//        创建RpcRequest
-        RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(), method.getDeclaringClass().getName(),
-                method.getName(), args, method.getParameterTypes(), false);
-//        初始化RpcResponse
-        RpcResponse rpcResponse = null;
-//        Netty客户端处理方式
-        if (client instanceof NettyClient) {
-            try {
-//                发送请求
-                CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>) client.sendRequest(rpcRequest);
-//                获取返回结果
-                rpcResponse = completableFuture.get();
-            } catch (Exception e) {
-                log.error("方法调用请求发送失败", e);
-                return null;
+    private class RpcClientHandler implements InvocationHandler {
+        //        业务组
+        private String group;
+
+        public RpcClientHandler(String group) {
+            this.group = group;
+        }
+
+        public Object invoke(Object proxy, Method method, Object[] args) {
+//            限制器预处理
+            limiter.preHandle();
+//            限制器拦截请求
+            if (!limiter.limit()) {
+                log.error("客户端繁忙");
+                limiter.afterHandle();
+                throw new RpcException(RpcError.CLIENT_BUSY);
             }
-        }
-//        Socket客户端处理方式
-        if (client instanceof SocketClient) {
+            log.info("调用方法: {}#{}", method.getDeclaringClass().getName(), method.getName());
+//          创建RpcRequest
+            RpcRequest rpcRequest = new RpcRequest()
+                    .setRequestId(UUID.randomUUID().toString())
+                    .setInterfaceName(method.getDeclaringClass().getName())
+                    .setMethodName(method.getName())
+                    .setGroup(this.group)
+                    .setParameters(args)
+                    .setParamTypes(method.getParameterTypes())
+                    .setHeartBeat(false);
+//          初始化RpcResponse
+            RpcResponse rpcResponse = null;
+//          Netty客户端处理方式
+            if (client instanceof NettyClient) {
+                try {
+//                发送请求
+                    CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>) client.sendRequest(rpcRequest);
+//                获取返回结果
+                    rpcResponse = completableFuture.get();
+                } catch (Exception e) {
+                    log.error("方法调用请求发送失败", e);
+                    return null;
+                }
+            }
+//          Socket客户端处理方式
+            if (client instanceof SocketClient) {
 //            发送请求并获取响应结果
-            rpcResponse = (RpcResponse) client.sendRequest(rpcRequest);
+                rpcResponse = (RpcResponse) client.sendRequest(rpcRequest);
+            }
+//          检查请求体与响应体
+            RpcMessageChecker.check(rpcRequest, rpcResponse);
+//            限制器后处理
+            limiter.afterHandle();
+//          返回响应数据
+            return rpcResponse.getData();
         }
-//        检查请求体与响应体
-        RpcMessageChecker.check(rpcRequest, rpcResponse);
-//        返回响应数据
-        return rpcResponse.getData();
     }
 }

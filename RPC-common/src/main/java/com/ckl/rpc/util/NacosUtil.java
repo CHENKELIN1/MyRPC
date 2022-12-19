@@ -4,6 +4,8 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.entity.Register;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +22,10 @@ import java.util.Set;
 @Slf4j
 public class NacosUtil {
     //    nacos服务地址
-    private static final String SERVER_ADDR = "81.68.85.4:8850";
     //    NamingService 是一种提供将名称映射到对象的方法的服务
     private static final NamingService namingService;
     //    服务名
-    private static final Set<String> serviceNames = new HashSet<>();
+    private static final Set<Register> serviceNames = new HashSet<>();
     //    服务端地址
     private static InetSocketAddress address;
 
@@ -39,7 +40,7 @@ public class NacosUtil {
      */
     public static NamingService getNacosNamingService() {
         try {
-            return NamingFactory.createNamingService(SERVER_ADDR);
+            return NamingFactory.createNamingService(DefaultConfig.DEFAULT_NACOS_SERVER_ADDRESS);
         } catch (NacosException e) {
             log.error("连接到Nacos时有错误发生: ", e);
             throw new RpcException(RpcError.FAILED_TO_CONNECT_TO_SERVICE_REGISTRY);
@@ -53,10 +54,10 @@ public class NacosUtil {
      * @param address     服务地址
      * @throws NacosException
      */
-    public static void registerService(String serviceName, InetSocketAddress address) throws NacosException {
-        namingService.registerInstance(serviceName, address.getHostName(), address.getPort());
+    public static void registerService(String serviceName, String group, InetSocketAddress address) throws NacosException {
+        namingService.registerInstance(serviceName, group, address.getHostName(), address.getPort());
         NacosUtil.address = address;
-        serviceNames.add(serviceName);
+        serviceNames.add(new Register(serviceName, group));
     }
 
     /**
@@ -66,8 +67,8 @@ public class NacosUtil {
      * @return
      * @throws NacosException
      */
-    public static List<Instance> getAllInstance(String serviceName) throws NacosException {
-        return namingService.getAllInstances(serviceName);
+    public static List<Instance> getAllInstance(String serviceName, String group) throws NacosException {
+        return namingService.getAllInstances(serviceName, group);
     }
 
     /**
@@ -77,13 +78,13 @@ public class NacosUtil {
         if (!serviceNames.isEmpty() && address != null) {
             String host = address.getHostName();
             int port = address.getPort();
-            Iterator<String> iterator = serviceNames.iterator();
+            Iterator<Register> iterator = serviceNames.iterator();
             while (iterator.hasNext()) {
-                String serviceName = iterator.next();
+                Register register = iterator.next();
                 try {
-                    namingService.deregisterInstance(serviceName, host, port);
+                    namingService.deregisterInstance(register.getServiceName(), register.getGroup(), host, port);
                 } catch (NacosException e) {
-                    log.error("注销服务 {} 失败", serviceName, e);
+                    log.error("注销服务 {} 失败", register.getServiceName(), register.getGroup(), e);
                 }
             }
         }

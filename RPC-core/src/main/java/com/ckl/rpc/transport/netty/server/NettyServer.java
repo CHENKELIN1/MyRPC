@@ -1,12 +1,17 @@
 package com.ckl.rpc.transport.netty.server;
 
-import com.ckl.rpc.transport.AbstractRpcServer;
-import com.ckl.rpc.codec.CommonDecoder;
-import com.ckl.rpc.codec.CommonEncoder;
+import com.ckl.rpc.codec.NettyDecoder;
+import com.ckl.rpc.codec.NettyEncoder;
+import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.hook.ShutdownHook;
+import com.ckl.rpc.limiter.CounterLimitHandler;
+import com.ckl.rpc.limiter.LimitHandler;
+import com.ckl.rpc.limiter.Limiter;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
 import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.transport.AbstractRpcServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -17,26 +22,26 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Netty服务端
  */
 @Slf4j
-public class NettyServer extends AbstractRpcServer {
+public class NettyServer extends AbstractRpcServer implements DefaultConfig {
     //    序列化器
     private final CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER);
+        this(host, port, DEFAULT_SERIALIZER.getCode(), new CounterLimitHandler(SERVER_LIMIT_COUNT));
     }
 
-    public NettyServer(String host, int port, Integer serializer) {
+    public NettyServer(String host, int port, Integer serializer, LimitHandler handler) {
         this.host = host;
         this.port = port;
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
+        this.serverStatus = new ServerStatus();
+        this.limiter = new Limiter(handler);
         scanServices();
     }
 
@@ -63,13 +68,13 @@ public class NettyServer extends AbstractRpcServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS))
+                            pipeline.addLast(new IdleStateHandler(NETTY_READER_IDLE_TIME, NETTY_WRITER_IDLE_TIME, NETTY_ALL_IDLE_TIME, NETTY_IDLE_TIME_UNIT))
 //                                    添加编码器
-                                    .addLast(new CommonEncoder(serializer))
+                                    .addLast(new NettyEncoder(serializer))
 //                                    添加解码器
-                                    .addLast(new CommonDecoder())
+                                    .addLast(new NettyDecoder())
 //                                    添加Netty客户端处理器
-                                    .addLast(new NettyServerHandler());
+                                    .addLast(new NettyServerHandler(serverStatus, limiter));
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host, port).sync();

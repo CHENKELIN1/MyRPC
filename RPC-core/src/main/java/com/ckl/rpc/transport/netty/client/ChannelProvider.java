@@ -1,7 +1,7 @@
 package com.ckl.rpc.transport.netty.client;
 
-import com.ckl.rpc.codec.CommonDecoder;
-import com.ckl.rpc.codec.CommonEncoder;
+import com.ckl.rpc.codec.NettyDecoder;
+import com.ckl.rpc.codec.NettyEncoder;
 import com.ckl.rpc.serializer.CommonSerializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -56,9 +56,9 @@ public class ChannelProvider {
             protected void initChannel(SocketChannel ch) {
                 /*自定义序列化编解码器*/
                 // RpcResponse -> ByteBuf
-                ch.pipeline().addLast(new CommonEncoder(serializer))
+                ch.pipeline().addLast(new NettyEncoder(serializer))
                         .addLast(new IdleStateHandler(0, 5, 0, TimeUnit.SECONDS))
-                        .addLast(new CommonDecoder())
+                        .addLast(new NettyDecoder())
                         .addLast(new NettyClientHandler());
             }
         });

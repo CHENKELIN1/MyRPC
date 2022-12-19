@@ -3,9 +3,10 @@ package com.ckl.rpc;
 import com.ckl.rpc.api.HelloObject;
 import com.ckl.rpc.api.HelloService;
 import com.ckl.rpc.api.MyTest;
-import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.transport.RpcClientProxy;
-import com.ckl.rpc.transport.socket.client.SocketClient;
+import com.ckl.rpc.bean.BeanFactory;
+import com.ckl.rpc.enumeration.GroupName;
+import com.ckl.rpc.factory.SingletonFactory;
+import com.ckl.rpc.status.ServerMonitor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,17 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TestSocketClient {
     public static void main(String[] args) {
-
-        SocketClient rpcClient = new SocketClient(CommonSerializer.KRYO_SERIALIZER);
-        RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcClient);
 //         测试接口1
-        HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
-        HelloObject helloObject = new HelloObject(12, "hello");
-        String res = helloService.hello(helloObject);
-        System.out.println(res);
+        HelloService helloService = BeanFactory.getBean(HelloService.class, GroupName.GROUP_0);
+        helloService.hello(new HelloObject(10, "hello socket client"));
 //        测试接口2
-        MyTest myTest = rpcClientProxy.getProxy(MyTest.class);
-        String res2 = myTest.getData();
-        System.out.println(res2);
+        MyTest myTest = BeanFactory.getBean(MyTest.class, GroupName.GROUP_0);
+        myTest.getData();
+        SingletonFactory.getInstance(ServerMonitor.class).showAllMonitorContent();
     }
 }

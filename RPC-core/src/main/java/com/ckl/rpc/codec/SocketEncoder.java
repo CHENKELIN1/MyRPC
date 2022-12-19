@@ -1,4 +1,4 @@
-package com.ckl.rpc.transport.socket.util;
+package com.ckl.rpc.codec;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.PackageType;
@@ -10,14 +10,12 @@ import java.io.OutputStream;
 /**
  * Socket方式写入输出流
  */
-public class ObjectWriter {
-    //    自定义协议头
-    private static final int MAGIC_NUMBER = 0xCAFEBABE;
+public class SocketEncoder {
 
     //    将对象写入输出流
     public static void writeObject(OutputStream outputStream, Object object, CommonSerializer serializer) throws IOException {
 //        写入自定义协议头
-        outputStream.write(intToBytes(MAGIC_NUMBER));
+        outputStream.write(intToBytes(Protocol.MAGIC_NUMBER));
 //        写入包类型
         if (object instanceof RpcRequest) {
             outputStream.write(intToBytes(PackageType.REQUEST_PACK.getCode()));
@@ -26,10 +24,14 @@ public class ObjectWriter {
         }
 //        写入序列化方式
         outputStream.write(intToBytes(serializer.getCode()));
-//        写入序列化后的数据
-        byte[] bytes = serializer.serialize(object);
-        outputStream.write(intToBytes(bytes.length));
-        outputStream.write(bytes);
+//        序列化数据
+        byte[] data = serializer.serialize(object);
+//        写入数据长度
+        outputStream.write(intToBytes(data.length));
+//        写入未定义协议
+        byte[] undefine = new byte[Protocol.UNDEFINED_LENGTH];
+        outputStream.write(undefine);
+        outputStream.write(data);
         outputStream.flush();
 
     }
