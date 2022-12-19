@@ -6,6 +6,7 @@ import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.limiter.Limiter;
 import com.ckl.rpc.provider.ServiceProvider;
 import com.ckl.rpc.registry.ServiceRegistry;
 import com.ckl.rpc.util.ReflectUtil;
@@ -29,6 +30,7 @@ public abstract class AbstractRpcServer implements RpcServer {
     protected ServiceProvider serviceProvider;
     //    服务器状态
     protected ServerStatus serverStatus;
+    protected Limiter limiter;
 
     //    扫描服务
     public void scanServices() {

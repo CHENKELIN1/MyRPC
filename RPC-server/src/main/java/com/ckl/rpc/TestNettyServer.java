@@ -11,7 +11,7 @@ import com.ckl.rpc.transport.netty.server.NettyServer;
 @MyRpcServiceScan
 public class TestNettyServer {
     public static void main(String[] args) {
-        RpcServer server = new NettyServer("127.0.0.1", 9990, CommonSerializer.JSON_SERIALIZER);
+        RpcServer server = new NettyServer("127.0.0.1", 9990);
         server.start();
     }
 }

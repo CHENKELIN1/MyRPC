@@ -35,9 +35,13 @@ public class RpcMessageChecker {
             throw new RpcException(RpcError.RESPONSE_NOT_MATCH, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
         }
 //        服务调用失败
-        if (rpcResponse.getCode() == null || !rpcResponse.getCode().equals(ResponseCode.SUCCESS.getCode())) {
-            log.error("调用服务失败,serviceName:{},RpcResponse:{}", rpcRequest.getInterfaceName(), rpcResponse);
+        if (rpcResponse.getCode() == null) {
+            log.error("调用服务失败:获取不到响应号,serviceName:{},RpcResponse:{}", rpcRequest.getInterfaceName(), rpcResponse);
             throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
+        }
+        if (!rpcResponse.getCode().equals(ResponseCode.SUCCESS.getCode())) {
+            log.error("服务调用失败:reason:{},serviceName:{},RpcResponse:{}", rpcResponse.getMsg(), rpcRequest.getInterfaceName(), rpcResponse);
+            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName()+rpcResponse.getMsg());
         }
     }
 }

@@ -21,7 +21,7 @@ public class TestNettyServer2 {
 
             @Override
             public void run() {
-                RpcServer server = new NettyServer("127.0.0.1", 9000 + count, CommonSerializer.JSON_SERIALIZER);
+                RpcServer server = new NettyServer("127.0.0.1", 9000 + count);
                 server.start();
             }
         }

@@ -14,10 +14,10 @@ public class TestNettyClientMultithreading {
 
             @Override
             public void run() {
-                for (int i = 0; i < 100; i++) {
+                while (true){
                     try {
                         int r = new Random().nextInt() % 10;
-                        Thread.sleep(r > 0 ? r * 1000 : -1 * r * 5000);
+                        Thread.sleep(r > 0 ? r * 10 : -1 * r * 10);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
