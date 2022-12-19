@@ -11,25 +11,6 @@ public interface CommonSerializer {
     Integer HESSIAN_SERIALIZER = 2;
 
     /**
-     * 序列化
-     *
-     * @param obj 序列化兑现
-     * @return 序列化结果
-     */
-    byte[] serialize(Object obj);
-
-    /**
-     * 反序列化
-     *
-     * @param bytes bytes
-     * @param clazz 目标类
-     * @return 反序列化结果
-     */
-    Object deserialize(byte[] bytes, Class<?> clazz);
-
-    int getCode();
-
-    /**
      * 通过序列化方式获取序列化对象
      *
      * @param code
@@ -48,6 +29,12 @@ public interface CommonSerializer {
         }
     }
 
+    /**
+     * 通过序列化类型获取对象
+     *
+     * @param code
+     * @return
+     */
     static CommonSerializer getByType(SerializerCode code) {
         switch (code) {
             case KRYO:
@@ -60,4 +47,23 @@ public interface CommonSerializer {
                 return null;
         }
     }
+
+    /**
+     * 序列化
+     *
+     * @param obj 序列化兑现
+     * @return 序列化结果
+     */
+    byte[] serialize(Object obj);
+
+    /**
+     * 反序列化
+     *
+     * @param bytes bytes
+     * @param clazz 目标类
+     * @return 反序列化结果
+     */
+    Object deserialize(byte[] bytes, Class<?> clazz);
+
+    int getCode();
 }

@@ -2,15 +2,14 @@ package com.ckl.rpc;
 
 import com.ckl.rpc.annotation.MyRpcServiceScan;
 import com.ckl.rpc.config.DefaultConfig;
-import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.transport.RpcServer;
 import com.ckl.rpc.transport.netty.server.NettyServer;
 
 /**
- * Netty服务端测试
+ * Netty服务端多线程测试用例TestNettyClientMultithreading
  */
 @MyRpcServiceScan(DefaultConfig.DEFAULT_PACKAGE)
-public class TestNettyServer2 {
+public class TestNettyServerMultithreading {
     public static void main(String[] args) throws InterruptedException {
         class test implements Runnable {
             int count;

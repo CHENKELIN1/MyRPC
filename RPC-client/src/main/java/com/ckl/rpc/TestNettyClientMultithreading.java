@@ -8,13 +8,16 @@ import com.ckl.rpc.status.ServerMonitor;
 
 import java.util.Random;
 
+/**
+ * 客户端多线程测试用例
+ */
 public class TestNettyClientMultithreading {
     public static void main(String[] args) throws InterruptedException {
         class test implements Runnable {
 
             @Override
             public void run() {
-                while (true){
+                while (true) {
                     try {
                         int r = new Random().nextInt() % 10;
                         Thread.sleep(r > 0 ? r * 10 : -1 * r * 10);

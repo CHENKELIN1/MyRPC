@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 public class RpcClientProxy {
     //    Rpc客户端
     private final RpcClient client;
+    //    限制器
     private final Limiter limiter;
 
     public RpcClientProxy(RpcClient client, LimitHandler limitHandler) {
@@ -43,7 +44,11 @@ public class RpcClientProxy {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, new RpcClientHandler(group));
     }
 
+    /**
+     * 客户端处理器
+     */
     private class RpcClientHandler implements InvocationHandler {
+        //        业务组
         private String group;
 
         public RpcClientHandler(String group) {
@@ -51,14 +56,16 @@ public class RpcClientProxy {
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) {
+//            限制器预处理
             limiter.preHandle();
-            if (!limiter.limit()){
+//            限制器拦截请求
+            if (!limiter.limit()) {
                 log.error("客户端繁忙");
                 limiter.afterHandle();
                 throw new RpcException(RpcError.CLIENT_BUSY);
             }
             log.info("调用方法: {}#{}", method.getDeclaringClass().getName(), method.getName());
-//        创建RpcRequest
+//          创建RpcRequest
             RpcRequest rpcRequest = new RpcRequest()
                     .setRequestId(UUID.randomUUID().toString())
                     .setInterfaceName(method.getDeclaringClass().getName())
@@ -67,9 +74,9 @@ public class RpcClientProxy {
                     .setParameters(args)
                     .setParamTypes(method.getParameterTypes())
                     .setHeartBeat(false);
-//        初始化RpcResponse
+//          初始化RpcResponse
             RpcResponse rpcResponse = null;
-//        Netty客户端处理方式
+//          Netty客户端处理方式
             if (client instanceof NettyClient) {
                 try {
 //                发送请求
@@ -81,15 +88,16 @@ public class RpcClientProxy {
                     return null;
                 }
             }
-//        Socket客户端处理方式
+//          Socket客户端处理方式
             if (client instanceof SocketClient) {
 //            发送请求并获取响应结果
                 rpcResponse = (RpcResponse) client.sendRequest(rpcRequest);
             }
-//        检查请求体与响应体
+//          检查请求体与响应体
             RpcMessageChecker.check(rpcRequest, rpcResponse);
+//            限制器后处理
             limiter.afterHandle();
-//        返回响应数据
+//          返回响应数据
             return rpcResponse.getData();
         }
     }

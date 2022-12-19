@@ -4,7 +4,6 @@ import com.ckl.rpc.codec.NettyDecoder;
 import com.ckl.rpc.codec.NettyEncoder;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.ServerStatus;
-import com.ckl.rpc.enumeration.LimiterType;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.limiter.CounterLimitHandler;
 import com.ckl.rpc.limiter.LimitHandler;
@@ -32,7 +31,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
     private final CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER.getCode(),new CounterLimitHandler(SERVER_LIMIT_COUNT));
+        this(host, port, DEFAULT_SERIALIZER.getCode(), new CounterLimitHandler(SERVER_LIMIT_COUNT));
     }
 
     public NettyServer(String host, int port, Integer serializer, LimitHandler handler) {
@@ -42,7 +41,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
         serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
         this.serverStatus = new ServerStatus();
-        this.limiter= new Limiter(handler);
+        this.limiter = new Limiter(handler);
         scanServices();
     }
 
@@ -75,7 +74,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
 //                                    添加解码器
                                     .addLast(new NettyDecoder())
 //                                    添加Netty客户端处理器
-                                    .addLast(new NettyServerHandler(serverStatus,limiter));
+                                    .addLast(new NettyServerHandler(serverStatus, limiter));
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host, port).sync();

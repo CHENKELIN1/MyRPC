@@ -89,6 +89,7 @@ public class NettyClient implements RpcClient, DefaultConfig {
                 group.shutdownGracefully();
                 return null;
             }
+//            服务器状态处理
             ServerStatusHandler.handleSend(inetSocketAddress);
 //            将请求放入未处理请求容器中
             unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);

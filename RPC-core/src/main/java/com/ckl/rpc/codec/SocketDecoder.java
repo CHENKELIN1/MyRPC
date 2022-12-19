@@ -23,7 +23,9 @@ public class SocketDecoder {
      * @throws IOException
      */
     public static Object readObject(InputStream in) throws IOException {
+//        协议解析
         Protocol protocol = new Protocol(in);
+//        内容处理
         return ProtocolHandler.handleIn(protocol);
     }
 }

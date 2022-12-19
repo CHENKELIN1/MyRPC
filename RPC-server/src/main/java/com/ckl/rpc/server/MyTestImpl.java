@@ -3,17 +3,18 @@ package com.ckl.rpc.server;
 import com.ckl.rpc.annotation.MyRpcService;
 import com.ckl.rpc.api.MyTest;
 
+/**
+ * MyTest 接口实现
+ */
 @MyRpcService
 public class MyTestImpl implements MyTest {
     @Override
     public String getData() {
-//        HelloService helloService = BeanFactory.getBean(HelloService.class, GroupName.GROUP_0);
-//        System.out.println(helloService.hello(new HelloObject(1, "hello myTest")));
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         return "my test success!!!";
     }
 }

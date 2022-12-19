@@ -8,8 +8,17 @@ import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.serializer.CommonSerializer;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 协议处理器
+ */
 @Slf4j
 public class ProtocolHandler {
+    /**
+     * 协议处理方法
+     *
+     * @param protocol 协议内容
+     * @return RpcRequest或RpcResponse对象
+     */
     public static Object handleIn(Protocol protocol) {
 //        不符合magicNumber
         if (protocol.getMagicNumber() != Protocol.MAGIC_NUMBER) {

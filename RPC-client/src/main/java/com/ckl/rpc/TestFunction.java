@@ -8,6 +8,9 @@ import com.ckl.rpc.status.ServerMonitor;
 
 import java.util.Random;
 
+/**
+ * 客户端测试方法
+ */
 public class TestFunction {
     public void test() {
         while (true) {

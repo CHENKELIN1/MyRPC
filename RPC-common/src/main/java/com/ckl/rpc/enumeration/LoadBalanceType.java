@@ -3,6 +3,9 @@ package com.ckl.rpc.enumeration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 负载均衡器类型
+ */
 @Getter
 @AllArgsConstructor
 public enum LoadBalanceType {

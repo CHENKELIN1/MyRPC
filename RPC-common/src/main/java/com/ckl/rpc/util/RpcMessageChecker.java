@@ -41,7 +41,7 @@ public class RpcMessageChecker {
         }
         if (!rpcResponse.getCode().equals(ResponseCode.SUCCESS.getCode())) {
             log.error("服务调用失败:reason:{},serviceName:{},RpcResponse:{}", rpcResponse.getMsg(), rpcRequest.getInterfaceName(), rpcResponse);
-            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName()+rpcResponse.getMsg());
+            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName() + rpcResponse.getMsg());
         }
     }
 }

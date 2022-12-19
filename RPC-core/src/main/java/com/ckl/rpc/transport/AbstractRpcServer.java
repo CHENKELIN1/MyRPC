@@ -36,11 +36,12 @@ public abstract class AbstractRpcServer implements RpcServer {
     public void scanServices() {
 //        获取当前方法全名
         String mainClassName = ReflectUtil.getStackTrace();
+//        获取basePackage
         String basePackage;
         try {
             Class<?> startClass = Class.forName(mainClassName);
             if (!startClass.isAnnotationPresent(MyRpcServiceScan.class)) {
-                log.warn("启动类缺少 @MyRpcServiceScan 注解");
+//                log.warn("启动类缺少 @MyRpcServiceScan 注解");
                 basePackage = DefaultConfig.DEFAULT_PACKAGE;
 //                throw new RpcException(RpcError.SERVICE_SCAN_PACKAGE_NOT_FOUND);
             } else {
@@ -68,7 +69,7 @@ public abstract class AbstractRpcServer implements RpcServer {
                     log.error("创建 " + clazz + " 时有错误发生");
                     continue;
                 }
-//                注册服务
+//                服务分组
                 if ("".equals(group)) {
                     group = DefaultConfig.DEFAULT_GROUP;
                 }

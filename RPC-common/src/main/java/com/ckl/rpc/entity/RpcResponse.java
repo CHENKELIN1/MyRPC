@@ -18,6 +18,7 @@ public class RpcResponse<T> implements Serializable {
     private String msg;
     //    响应返回数据
     private T data;
+    //    服务器状态
     private ServerStatus status;
 
     public RpcResponse() {
@@ -50,6 +51,13 @@ public class RpcResponse<T> implements Serializable {
         return response;
     }
 
+    /**
+     * 心跳响应
+     *
+     * @param status    服务器状态
+     * @param requestId 请求ID
+     * @return RpcResponse
+     */
     public static <T> RpcResponse<T> heartBeat(ServerStatus status, String requestId) {
         RpcResponse<T> response = new RpcResponse<>();
         response.setCode(ResponseCode.HEART_BEAT.getCode());

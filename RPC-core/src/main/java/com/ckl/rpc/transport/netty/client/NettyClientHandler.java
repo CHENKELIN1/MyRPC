@@ -32,13 +32,24 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
 
+    /**
+     * 处理读入内容
+     *
+     * @param ctx the {@link ChannelHandlerContext} which this {@link SimpleChannelInboundHandler}
+     *            belongs to
+     * @param msg the message to handle
+     * @throws Exception
+     */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg) throws Exception {
         try {
+//            服务器状态处理
             ServerStatusHandler.handleReceived(msg, (InetSocketAddress) ctx.channel().remoteAddress());
+//            心跳报文
             if (msg.getCode() == ResponseCode.HEART_BEAT.getCode()) {
                 if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("收到服务器状态: " + msg.getStatus().toString());
             } else {
+//                请求报文
                 if (DefaultConfig.CLIENT_SHOW_DETAIL_RESPONSE_LOG) log.info(String.format("客户端接收到消息: %s", msg));
                 unprocessedRequests.complete(msg);
             }
@@ -54,6 +65,13 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
         ctx.close();
     }
 
+    /**
+     * 状态监控操作：发送心跳报文
+     *
+     * @param ctx
+     * @param evt
+     * @throws Exception
+     */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {

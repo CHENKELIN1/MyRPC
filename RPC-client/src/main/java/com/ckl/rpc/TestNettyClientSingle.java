@@ -9,7 +9,7 @@ import com.ckl.rpc.factory.SingletonFactory;
 import com.ckl.rpc.status.ServerMonitor;
 
 /**
- * Netty客户端测试
+ * Netty客户端简单测试用例
  */
 public class TestNettyClientSingle {
     public static void main(String[] args) {

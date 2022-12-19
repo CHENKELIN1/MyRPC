@@ -3,6 +3,9 @@ package com.ckl.rpc.enumeration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 通信方式
+ */
 @Getter
 @AllArgsConstructor
 public enum TransmissionType {

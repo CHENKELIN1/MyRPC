@@ -1,9 +1,15 @@
 package com.ckl.rpc.config;
 
-import com.ckl.rpc.enumeration.*;
+import com.ckl.rpc.enumeration.GroupName;
+import com.ckl.rpc.enumeration.LoadBalanceType;
+import com.ckl.rpc.enumeration.SerializerCode;
+import com.ckl.rpc.enumeration.TransmissionType;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 全局配置内容
+ */
 public interface DefaultConfig {
     /*
      * client server config
@@ -40,6 +46,7 @@ public interface DefaultConfig {
     boolean CLIENT_SHOW_DETAIL_RESPONSE_LOG = false;
     boolean CLIENT_SHOW_HEART_BEAT_LOG = false;
     boolean SHOW_SERVER_STATUS_LOG = false;
+    boolean LIMIT_LOG = true;
     /*
      * limiter config
      * */
