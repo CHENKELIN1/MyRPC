@@ -1,6 +1,7 @@
 package com.ckl.rpc.bean;
 
 import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.config.Init;
 import com.ckl.rpc.limiter.CounterLimitHandler;
 import com.ckl.rpc.transport.RpcClient;
 import com.ckl.rpc.transport.RpcClientProxy;
@@ -19,6 +20,7 @@ public class BeanFactory implements DefaultConfig {
      * 初始化
      */
     static {
+        Init.init();
         log.info("初始化BeanFactory...");
         RpcClient rpcClient;
         switch (DEFAULT_TRANSMISSION) {
