@@ -52,4 +52,8 @@ public interface DefaultConfig {
      * */
     int SERVER_LIMIT_COUNT = 5;
     int CLIENT_LIMIT_COUNT = 5;
+    /*
+    自定义协议
+     */
+    int EXPEND_LENGTH = 19;
 }

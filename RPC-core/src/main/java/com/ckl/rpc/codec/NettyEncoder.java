@@ -1,11 +1,16 @@
 package com.ckl.rpc.codec;
 
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.PackageType;
 import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.util.CommonUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 /**
  * 编码器
@@ -39,13 +44,15 @@ public class NettyEncoder extends MessageToByteEncoder {
 //        写入int4字节序列化方式
         out.writeInt(serializer.getCode());
 //        将对象序列化
-        byte[] bytes = serializer.serialize(msg);
-//        写入int4字节对象长度
-        out.writeInt(bytes.length);
-//        写入为定义协议
-        byte[] undefine = new byte[Protocol.UNDEFINED_LENGTH];
-        out.writeBytes(undefine);
+        byte[] data = serializer.serialize(msg);
+//        写入数据长度
+        out.writeInt(data.length);
+//        写入扩展协议长度
+        out.writeInt(DefaultConfig.EXPEND_LENGTH);
+//        写入扩展协议内容
+        byte[] expendData = ExpendProtocol.expendProtocolHandleWrite();
+        out.writeBytes(expendData);
 //        写入对象数据
-        out.writeBytes(bytes);
+        out.writeBytes(data);
     }
 }

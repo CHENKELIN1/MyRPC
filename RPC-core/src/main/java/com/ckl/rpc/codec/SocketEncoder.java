@@ -1,5 +1,6 @@
 package com.ckl.rpc.codec;
 
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.PackageType;
 import com.ckl.rpc.serializer.CommonSerializer;
@@ -28,9 +29,10 @@ public class SocketEncoder {
         byte[] data = serializer.serialize(object);
 //        写入数据长度
         outputStream.write(intToBytes(data.length));
-//        写入未定义协议
-        byte[] undefine = new byte[Protocol.UNDEFINED_LENGTH];
-        outputStream.write(undefine);
+//        写入扩展协议长度
+        outputStream.write(intToBytes(DefaultConfig.EXPEND_LENGTH));
+        byte[] expendData=ExpendProtocol.expendProtocolHandleWrite();
+        outputStream.write(expendData);
         outputStream.write(data);
         outputStream.flush();
 

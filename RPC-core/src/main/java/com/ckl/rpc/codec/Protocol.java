@@ -31,8 +31,10 @@ public class Protocol {
     private int serializerCode;
     //    数据长度
     private int dataLength;
-    //    为定义协议
-    private byte[] undefined;
+    //    协议头长度
+    private int expandLength;
+    //    扩展内容
+    private byte[] expandData;
     //    数据
     private byte[] data;
 
@@ -46,10 +48,12 @@ public class Protocol {
         this.packageCode = in.readInt();
         this.serializerCode = in.readInt();
         this.dataLength = in.readInt();
-        undefined = new byte[UNDEFINED_LENGTH];
-        in.readBytes(undefined);
+        this.expandLength=in.readInt();
+        this.expandData=new byte[expandLength];
+        in.readBytes(expandData);
         data = new byte[dataLength];
         in.readBytes(data);
+        ExpendProtocol.expendProtocolHandleRead(expandData);
     }
 
     /**
@@ -59,6 +63,7 @@ public class Protocol {
      * @throws IOException
      */
     public Protocol(InputStream in) throws IOException {
+//        固定协议头
         byte[] buffer = new byte[INT_LENGTH];
         in.read(buffer);
         this.magicNumber = bytesToInt(buffer);
@@ -68,11 +73,17 @@ public class Protocol {
         this.serializerCode = bytesToInt(buffer);
         in.read(buffer);
         this.dataLength = bytesToInt(buffer);
-        undefined = new byte[UNDEFINED_LENGTH];
-        in.read(undefined);
+        in.read(buffer);
+//        扩展协议
+        this.expandLength=bytesToInt(buffer);
+        byte[] expandData=new byte[expandLength];
+        in.read(expandData);
+        this.expandData=expandData;
+//        数据
         byte[] data = new byte[this.dataLength];
         in.read(data);
         this.data = data;
+        ExpendProtocol.expendProtocolHandleRead(expandData);
     }
 
     public static int bytesToInt(byte[] src) {
