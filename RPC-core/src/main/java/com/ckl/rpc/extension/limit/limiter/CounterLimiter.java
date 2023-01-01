@@ -21,11 +21,11 @@ public class CounterLimiter implements Limiter, DefaultConfig {
 
     @Override
     public synchronized void preHandle() {
-        count--;
     }
 
     @Override
     public synchronized boolean limit() {
+        count--;
         boolean res = count < 0;
         if (res) log.error("拦截请求：拦截器：Counter：count:{}", count);
         return res;

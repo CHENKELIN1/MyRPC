@@ -51,12 +51,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         try {
             RpcResponse response;
             serverStatus.addReceived();
-            limiter.preHandle();
 //            获取心跳
             if (msg.getHeartBeat()) {
                 if (DefaultConfig.SERVER_SHOW_HEART_BEAT_LOG) log.info("接收到客户端心跳包...");
                 response = RpcResponse.heartBeat(ServerStatusHandler.updateStatus(serverStatus), msg.getRequestId());
             } else {
+                limiter.preHandle();
                 if (DefaultConfig.SERVER_SHOW_DETAIL_REQUEST_LOG) log.info("服务器接收到请求: {}", msg);
                 if (limiter.limit()) {
                     response = RpcResponse.fail(ResponseCode.SERVER_BUSY, msg.getRequestId());
@@ -70,8 +70,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
                         response = RpcResponse.success(result, msg.getRequestId(), ServerStatusHandler.updateStatus(serverStatus));
                     }
                 }
+                limiter.afterHandle();
             }
-            limiter.afterHandle();
 //          若通道可写
             if (ctx.channel().isActive() && ctx.channel().isWritable()) {
 //                写入响应数据
