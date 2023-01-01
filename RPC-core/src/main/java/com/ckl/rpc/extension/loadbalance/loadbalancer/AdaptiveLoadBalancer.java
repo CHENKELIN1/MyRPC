@@ -1,6 +1,7 @@
 package com.ckl.rpc.extension.loadbalance.loadbalancer;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.ServerMonitorContent;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 import com.ckl.rpc.factory.SingletonFactory;
@@ -18,11 +19,12 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
     /**
      * 选择服务实例
      *
-     * @param instances 所有服务实例
+     * @param instances  所有服务实例
+     * @param rpcRequest
      * @return 服务实例
      */
     @Override
-    public Instance select(List<Instance> instances) {
+    public Instance select(List<Instance> instances, RpcRequest rpcRequest) {
 //        获取监控器
         ServerMonitor serverMonitor = SingletonFactory.getInstance(ServerMonitor.class);
 //        初始化结果
@@ -35,7 +37,7 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
             ServerMonitorContent serverMonitorContent = serverMonitor.getMonitorContent(getAddress(instance));
 //            为空则表示未使用过，则直接返回
             if (serverMonitorContent == null) {
-                log.info("select not used:" + getAddress(instance));
+//                log.info("select not used:" + getAddress(instance));
                 return instance;
             }
 //            计算得分
@@ -44,7 +46,7 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
             result = selectInstance(result, instance, score, thisScore);
             score = flushScore(score, thisScore);
         }
-        log.info("select better:" + getAddress(result));
+//        log.info("select better:" + getAddress(result));
         return result;
     }
 

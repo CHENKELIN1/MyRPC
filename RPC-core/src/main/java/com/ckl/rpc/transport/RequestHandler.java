@@ -31,7 +31,7 @@ public class RequestHandler {
      */
     public Object handle(RpcRequest rpcRequest) {
 //        根据请求获取服务对象
-        Object service = serviceProvider.getServiceProvider(rpcRequest.getInterfaceName(), rpcRequest.getGroup());
+        Object service = serviceProvider.getServiceProvider(rpcRequest.getServiceName(), rpcRequest.getGroup());
 //        调用目标方法
         return invokeTargetMethod(rpcRequest, service);
     }
@@ -52,7 +52,7 @@ public class RequestHandler {
 //            调用方法
             result = method.invoke(service, rpcRequest.getParameters());
             if (DefaultConfig.INVOKE_LOG)
-                log.info("服务:{} 成功调用方法:{}", rpcRequest.getInterfaceName(), rpcRequest.getMethodName());
+                log.info("服务:{} 成功调用方法:{}", rpcRequest.getServiceName(), rpcRequest.getMethodName());
         } catch (NoSuchMethodException e) {
             return RpcResponse.fail(ResponseCode.NOT_FOUND_METHOD, rpcRequest.getRequestId());
         } catch (IllegalAccessException e) {

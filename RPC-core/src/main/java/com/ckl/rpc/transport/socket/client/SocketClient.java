@@ -59,7 +59,7 @@ public class SocketClient implements RpcClient, DefaultConfig {
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
 //        查询服务socket地址
-        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName(), rpcRequest.getGroup());
+        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
 //        创建socket连接
         try (Socket socket = new Socket()) {
             socket.connect(inetSocketAddress);

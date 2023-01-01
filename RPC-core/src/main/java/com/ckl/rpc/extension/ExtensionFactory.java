@@ -10,6 +10,7 @@ import com.ckl.rpc.extension.limit.Limiter;
 import com.ckl.rpc.extension.limit.limiter.CounterLimiter;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 import com.ckl.rpc.extension.loadbalance.loadbalancer.AdaptiveLoadBalancer;
+import com.ckl.rpc.extension.loadbalance.loadbalancer.ConsistentHashLoadBalancer;
 import com.ckl.rpc.extension.loadbalance.loadbalancer.RandomLoadBalancer;
 import com.ckl.rpc.extension.loadbalance.loadbalancer.RoundRobinLoadBalancer;
 import com.ckl.rpc.extension.serialize.Serializer;
@@ -59,6 +60,9 @@ public class ExtensionFactory {
         }
         if (o == LoadBalanceType.LOAD_BALANCE_ADAPTIVE) {
             return new AdaptiveLoadBalancer();
+        }
+        if (o == LoadBalanceType.LOAD_BALANCE_CONSISTENT_HASH){
+            return new ConsistentHashLoadBalancer();
         }
         return null;
     }

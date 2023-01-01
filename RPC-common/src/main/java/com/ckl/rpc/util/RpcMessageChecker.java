@@ -27,21 +27,21 @@ public class RpcMessageChecker {
     public static void check(RpcRequest rpcRequest, RpcResponse rpcResponse) {
 //        响应体为空
         if (rpcResponse == null) {
-            log.error("调用服务失败,serviceName:{}", rpcRequest.getInterfaceName());
-            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
+            log.error("调用服务失败,serviceName:{}", rpcRequest.getServiceName());
+            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getServiceName());
         }
 //        请求号不对应
         if (!rpcRequest.getRequestId().equals(rpcResponse.getRequestId())) {
-            throw new RpcException(RpcError.RESPONSE_NOT_MATCH, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
+            throw new RpcException(RpcError.RESPONSE_NOT_MATCH, INTERFACE_NAME + ":" + rpcRequest.getServiceName());
         }
 //        服务调用失败
         if (rpcResponse.getCode() == null) {
-            log.error("调用服务失败:获取不到响应号,serviceName:{},RpcResponse:{}", rpcRequest.getInterfaceName(), rpcResponse);
-            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
+            log.error("调用服务失败:获取不到响应号,serviceName:{},RpcResponse:{}", rpcRequest.getServiceName(), rpcResponse);
+            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getServiceName());
         }
         if (!rpcResponse.getCode().equals(ResponseCode.SUCCESS.getCode())) {
-            log.error("服务调用失败:reason:{},serviceName:{},RpcResponse:{}", rpcResponse.getMsg(), rpcRequest.getInterfaceName(), rpcResponse);
-            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName() + rpcResponse.getMsg());
+            log.error("服务调用失败:reason:{},serviceName:{},RpcResponse:{}", rpcResponse.getMsg(), rpcRequest.getServiceName(), rpcResponse);
+            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getServiceName() + rpcResponse.getMsg());
         }
     }
 }

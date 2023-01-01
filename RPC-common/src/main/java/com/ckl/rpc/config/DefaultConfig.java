@@ -13,7 +13,7 @@ public interface DefaultConfig {
      * */
     SerializerCode DEFAULT_SERIALIZER = SerializerCode.KRYO;
     TransmissionType DEFAULT_TRANSMISSION = TransmissionType.NETTY;
-    LoadBalanceType DEFAULT_LOAD_BALANCE = LoadBalanceType.LOAD_BALANCE_RANDOM;
+    LoadBalanceType DEFAULT_LOAD_BALANCE = LoadBalanceType.LOAD_BALANCE_CONSISTENT_HASH;
     LimiterType DEFAULT_LIMITER = LimiterType.COUNTER;
     CompressType DEFAULT_COMPRESSER = CompressType.GZIP;
     /*
