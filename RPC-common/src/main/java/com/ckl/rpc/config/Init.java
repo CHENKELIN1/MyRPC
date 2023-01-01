@@ -1,10 +1,11 @@
 package com.ckl.rpc.config;
 
 public class Init {
-    public static void init(){
+    public static void init() {
         initLogo1();
     }
-    private static void initLogo1(){
+
+    private static void initLogo1() {
         System.out.println(" ____    ____         _______     _______     ______  ");
         System.out.println("|_   \\  /   _|       |_   __ \\   |_   __ \\  .' ___  | ");
         System.out.println("  |   \\/   |    _   __ | |__) |    | |__) |/ .'   \\_| ");

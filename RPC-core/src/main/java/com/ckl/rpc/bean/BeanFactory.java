@@ -2,7 +2,7 @@ package com.ckl.rpc.bean;
 
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.config.Init;
-import com.ckl.rpc.limiter.CounterLimitHandler;
+import com.ckl.rpc.enumeration.TransmissionType;
 import com.ckl.rpc.transport.RpcClient;
 import com.ckl.rpc.transport.RpcClientProxy;
 import com.ckl.rpc.transport.netty.client.NettyClient;
@@ -23,15 +23,14 @@ public class BeanFactory implements DefaultConfig {
         Init.init();
         log.info("初始化BeanFactory...");
         RpcClient rpcClient;
-        switch (DEFAULT_TRANSMISSION) {
-            case SOCKET:
-                rpcClient = new SocketClient();
-                break;
-            default:
-                rpcClient = new NettyClient();
-                break;
+        if (DEFAULT_TRANSMISSION == TransmissionType.SOCKET) {
+            rpcClient = new SocketClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE);
+        } else if (DEFAULT_TRANSMISSION == TransmissionType.NETTY) {
+            rpcClient = new NettyClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE);
+        } else {
+            rpcClient = null;
         }
-        rpcClientProxy = new RpcClientProxy(rpcClient, new CounterLimitHandler(CLIENT_LIMIT_COUNT));
+        rpcClientProxy = new RpcClientProxy(rpcClient);
         log.info("初始化完成:lb:" + DEFAULT_LOAD_BALANCE);
     }
 

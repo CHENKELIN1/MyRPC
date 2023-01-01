@@ -1,7 +1,6 @@
 package com.ckl.rpc;
 
 import com.ckl.rpc.annotation.MyRpcServiceScan;
-import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.transport.RpcServer;
 import com.ckl.rpc.transport.socket.server.SocketServer;
 
@@ -11,7 +10,7 @@ import com.ckl.rpc.transport.socket.server.SocketServer;
 @MyRpcServiceScan
 public class TestSocketServer {
     public static void main(String[] args) {
-        RpcServer server = new SocketServer("127.0.0.1", 9998, CommonSerializer.JSON_SERIALIZER);
+        RpcServer server = new SocketServer("127.0.0.1", 9998);
         server.start();
     }
 }

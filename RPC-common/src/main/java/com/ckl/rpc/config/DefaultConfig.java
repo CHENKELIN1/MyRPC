@@ -1,9 +1,6 @@
 package com.ckl.rpc.config;
 
-import com.ckl.rpc.enumeration.GroupName;
-import com.ckl.rpc.enumeration.LoadBalanceType;
-import com.ckl.rpc.enumeration.SerializerCode;
-import com.ckl.rpc.enumeration.TransmissionType;
+import com.ckl.rpc.enumeration.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,9 +11,10 @@ public interface DefaultConfig {
     /*
      * client server config
      * */
-    SerializerCode DEFAULT_SERIALIZER = SerializerCode.HESSIAN;
+    SerializerCode DEFAULT_SERIALIZER = SerializerCode.KRYO;
     TransmissionType DEFAULT_TRANSMISSION = TransmissionType.NETTY;
     LoadBalanceType DEFAULT_LOAD_BALANCE = LoadBalanceType.LOAD_BALANCE_RANDOM;
+    LimiterType DEFAULT_LIMITER = LimiterType.COUNTER;
     /*
      * nacos config
      * */
@@ -46,12 +44,11 @@ public interface DefaultConfig {
     boolean CLIENT_SHOW_DETAIL_RESPONSE_LOG = false;
     boolean CLIENT_SHOW_HEART_BEAT_LOG = false;
     boolean SHOW_SERVER_STATUS_LOG = false;
-    boolean LIMIT_LOG = true;
+    boolean LIMIT_LOG = false;
     /*
      * limiter config
      * */
-    int SERVER_LIMIT_COUNT = 5;
-    int CLIENT_LIMIT_COUNT = 5;
+    int LIMIT_COUNTER_LIMITER_COUNT = 5;
     /*
     自定义协议
      */

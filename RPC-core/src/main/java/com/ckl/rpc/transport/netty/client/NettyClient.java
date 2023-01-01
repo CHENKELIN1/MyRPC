@@ -7,11 +7,12 @@ import com.ckl.rpc.enumeration.LoadBalanceType;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.loadbalance.LoadBalancer;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.loadbalancer.LoadBalancer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
-import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.transport.RpcClient;
 import io.netty.bootstrap.Bootstrap;
@@ -30,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * TODO
  */
 @Slf4j
-public class NettyClient implements RpcClient, DefaultConfig {
+public class NettyClient implements RpcClient {
     private static final EventLoopGroup group;
     private static final Bootstrap bootstrap;
 
@@ -44,25 +45,14 @@ public class NettyClient implements RpcClient, DefaultConfig {
     //    服务发现者
     private final ServiceDiscovery serviceDiscovery;
     //    序列化方式
-    private final CommonSerializer serializer;
+    private final Serializer serializer;
     //    未处理请求
     private final UnprocessedRequests unprocessedRequests;
 
-    public NettyClient() {
-        this(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE);
-    }
 
-    public NettyClient(LoadBalanceType loadBalancer) {
-        this(DEFAULT_SERIALIZER, loadBalancer);
-    }
-
-    public NettyClient(SerializerCode serializer) {
-        this(serializer, DEFAULT_LOAD_BALANCE);
-    }
-
-    public NettyClient(SerializerCode serializer, LoadBalanceType loadBalancer) {
-        this.serviceDiscovery = new NacosServiceDiscovery(LoadBalancer.getByType(loadBalancer));
-        this.serializer = CommonSerializer.getByType(serializer);
+    public NettyClient(SerializerCode serializerCode, LoadBalanceType loadBalanceType) {
+        this.serviceDiscovery = new NacosServiceDiscovery(ExtensionFactory.getExtension(LoadBalancer.class, loadBalanceType));
+        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode);
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
 

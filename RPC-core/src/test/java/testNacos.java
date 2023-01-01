@@ -21,7 +21,7 @@ public class testNacos {
     }
 
     @Test
-    public void t2(){
+    public void t2() {
         String format = new SimpleDateFormat("yyyy/MM/dd/HH:mm:ss").format(new Date());
         System.out.println("format.length() = " + format.length());
         System.out.println("format = " + format);

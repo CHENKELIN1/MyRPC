@@ -1,7 +1,8 @@
-package com.ckl.rpc.loadbalancer;
+package com.ckl.rpc.extension.loadbalance.loadbalancer;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.ckl.rpc.entity.ServerMonitorContent;
+import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 import com.ckl.rpc.factory.SingletonFactory;
 import com.ckl.rpc.status.ServerMonitor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
                 return instance;
             }
 //            计算得分
-            int thisScore = getCore(serverMonitorContent);
+            int thisScore = getScore(serverMonitorContent);
 //            更新最佳值
             result = selectInstance(result, instance, score, thisScore);
             score = flushScore(score, thisScore);
@@ -53,7 +54,7 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
      * @param serverMonitorContent 监控内容
      * @return 得分
      */
-    private int getCore(ServerMonitorContent serverMonitorContent) {
+    private int getScore(ServerMonitorContent serverMonitorContent) {
         return serverMonitorContent.getServerStatus().getReceivedCount();
     }
 

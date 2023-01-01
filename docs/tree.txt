@@ -16,7 +16,7 @@
 │                         ├── codec:编码译码器
 │                         ├── handler:处理器
 │                         ├── hook:钩子函数
-│                         ├── limiter:限制器
+│                         ├── limitHandler:限制器
 │                         ├── loadbalancer:负载均衡器
 │                         ├── provider:服务提供
 │                         ├── registry:服务注册

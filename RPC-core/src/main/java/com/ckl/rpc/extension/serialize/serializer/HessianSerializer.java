@@ -1,9 +1,10 @@
-package com.ckl.rpc.serializer;
+package com.ckl.rpc.extension.serialize.serializer;
 
 import com.caucho.hessian.io.HessianInput;
 import com.caucho.hessian.io.HessianOutput;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.SerializeException;
+import com.ckl.rpc.extension.serialize.Serializer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
@@ -14,7 +15,7 @@ import java.io.IOException;
  * Hessian序列化器
  */
 @Slf4j
-public class HessianSerializer implements CommonSerializer {
+public class HessianSerializer implements Serializer {
     @Override
     public byte[] serialize(Object obj) {
         HessianOutput hessianOutput = null;

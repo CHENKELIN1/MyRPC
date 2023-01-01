@@ -4,8 +4,8 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
-import com.ckl.rpc.loadbalancer.LoadBalancer;
-import com.ckl.rpc.loadbalancer.RandomLoadBalancer;
+import com.ckl.rpc.extension.loadbalance.LoadBalancer;
+import com.ckl.rpc.extension.loadbalance.loadbalancer.RandomLoadBalancer;
 import com.ckl.rpc.util.NacosUtil;
 import lombok.extern.slf4j.Slf4j;
 

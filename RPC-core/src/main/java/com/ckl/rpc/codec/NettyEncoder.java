@@ -3,23 +3,19 @@ package com.ckl.rpc.codec;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.PackageType;
-import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.util.CommonUtil;
+import com.ckl.rpc.extension.serialize.Serializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 /**
  * 编码器
  */
 public class NettyEncoder extends MessageToByteEncoder {
     //    序列化方式
-    private final CommonSerializer serializer;
+    private final Serializer serializer;
 
-    public NettyEncoder(CommonSerializer serializer) {
+    public NettyEncoder(Serializer serializer) {
         this.serializer = serializer;
     }
 
@@ -32,7 +28,7 @@ public class NettyEncoder extends MessageToByteEncoder {
      * @throws Exception
      */
     @Override
-    protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) {
 //        写入int4字节自定义协议标识头
         out.writeInt(Protocol.MAGIC_NUMBER);
 //        根据数据类型写入int4字节的包类型

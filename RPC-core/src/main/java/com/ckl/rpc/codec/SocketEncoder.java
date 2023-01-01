@@ -3,7 +3,7 @@ package com.ckl.rpc.codec;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.PackageType;
-import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.extension.serialize.Serializer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,7 +14,7 @@ import java.io.OutputStream;
 public class SocketEncoder {
 
     //    将对象写入输出流
-    public static void writeObject(OutputStream outputStream, Object object, CommonSerializer serializer) throws IOException {
+    public static void writeObject(OutputStream outputStream, Object object, Serializer serializer) throws IOException {
 //        写入自定义协议头
         outputStream.write(intToBytes(Protocol.MAGIC_NUMBER));
 //        写入包类型
@@ -31,7 +31,7 @@ public class SocketEncoder {
         outputStream.write(intToBytes(data.length));
 //        写入扩展协议长度
         outputStream.write(intToBytes(DefaultConfig.EXPEND_LENGTH));
-        byte[] expendData=ExpendProtocol.expendProtocolHandleWrite();
+        byte[] expendData = ExpendProtocol.expendProtocolHandleWrite();
         outputStream.write(expendData);
         outputStream.write(data);
         outputStream.flush();

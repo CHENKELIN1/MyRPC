@@ -2,7 +2,7 @@ package com.ckl.rpc.transport.netty.client;
 
 import com.ckl.rpc.codec.NettyDecoder;
 import com.ckl.rpc.codec.NettyEncoder;
-import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.extension.serialize.Serializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -37,7 +37,7 @@ public class ChannelProvider {
      * @return channel
      * @throws InterruptedException
      */
-    public static Channel get(InetSocketAddress inetSocketAddress, CommonSerializer serializer) throws InterruptedException {
+    public static Channel get(InetSocketAddress inetSocketAddress, Serializer serializer) throws InterruptedException {
 //        得到channel key
         String key = inetSocketAddress.toString() + serializer.getCode();
         if (channels.containsKey(key)) {

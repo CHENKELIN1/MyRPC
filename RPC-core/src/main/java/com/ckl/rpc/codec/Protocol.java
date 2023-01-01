@@ -48,8 +48,8 @@ public class Protocol {
         this.packageCode = in.readInt();
         this.serializerCode = in.readInt();
         this.dataLength = in.readInt();
-        this.expandLength=in.readInt();
-        this.expandData=new byte[expandLength];
+        this.expandLength = in.readInt();
+        this.expandData = new byte[expandLength];
         in.readBytes(expandData);
         data = new byte[dataLength];
         in.readBytes(data);
@@ -75,10 +75,10 @@ public class Protocol {
         this.dataLength = bytesToInt(buffer);
         in.read(buffer);
 //        扩展协议
-        this.expandLength=bytesToInt(buffer);
-        byte[] expandData=new byte[expandLength];
+        this.expandLength = bytesToInt(buffer);
+        byte[] expandData = new byte[expandLength];
         in.read(expandData);
-        this.expandData=expandData;
+        this.expandData = expandData;
 //        数据
         byte[] data = new byte[this.dataLength];
         in.read(data);

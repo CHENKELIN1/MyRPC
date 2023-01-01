@@ -1,8 +1,9 @@
-package com.ckl.rpc.serializer;
+package com.ckl.rpc.extension.serialize.serializer;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.SerializeException;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +14,8 @@ import java.io.IOException;
  * JSON序列化器
  */
 @Slf4j
-public class JsonSerializer implements CommonSerializer {
-    private ObjectMapper objectMapper = new ObjectMapper();
+public class JsonSerializer implements Serializer {
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public byte[] serialize(Object obj) {

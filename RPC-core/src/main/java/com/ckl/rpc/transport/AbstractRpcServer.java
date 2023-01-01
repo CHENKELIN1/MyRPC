@@ -7,7 +7,7 @@ import com.ckl.rpc.config.Init;
 import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
-import com.ckl.rpc.limiter.Limiter;
+import com.ckl.rpc.extension.limit.Limiter;
 import com.ckl.rpc.provider.ServiceProvider;
 import com.ckl.rpc.registry.ServiceRegistry;
 import com.ckl.rpc.util.ReflectUtil;
@@ -21,6 +21,10 @@ import java.util.Set;
  */
 @Slf4j
 public abstract class AbstractRpcServer implements RpcServer {
+    static {
+        Init.init();
+    }
+
     //    Ip地址
     protected String host;
     //    端口
@@ -32,10 +36,6 @@ public abstract class AbstractRpcServer implements RpcServer {
     //    服务器状态
     protected ServerStatus serverStatus;
     protected Limiter limiter;
-
-    static {
-        Init.init();
-    }
 
     //    扫描服务
     public void scanServices() {

@@ -1,6 +1,7 @@
-package com.ckl.rpc.limiter;
+package com.ckl.rpc.extension.limit.limiter;
 
-import lombok.AllArgsConstructor;
+import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.extension.limit.Limiter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,9 +10,12 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class CounterLimitHandler implements LimitHandler {
-    int count;
+public class CounterLimiter implements Limiter, DefaultConfig {
+    private int count;
+
+    {
+        this.count = LIMIT_COUNTER_LIMITER_COUNT;
+    }
 
     @Override
     public synchronized void preHandle() {
@@ -20,8 +24,7 @@ public class CounterLimitHandler implements LimitHandler {
 
     @Override
     public boolean limit() {
-        if (count < 0) return false;
-        return true;
+        return count < 0;
     }
 
     @Override

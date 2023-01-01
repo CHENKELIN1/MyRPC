@@ -1,6 +1,7 @@
-package com.ckl.rpc.loadbalancer;
+package com.ckl.rpc.extension.loadbalance.loadbalancer;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 
 import java.util.List;
 

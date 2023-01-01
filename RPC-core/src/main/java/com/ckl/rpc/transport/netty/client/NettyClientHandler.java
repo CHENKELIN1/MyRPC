@@ -4,8 +4,9 @@ import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.ResponseCode;
+import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.status.ServerStatusHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Objects;
 
 /**
  * Netty客户端处理器
@@ -80,7 +82,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
                 SocketAddress socketAddress = ctx.channel().remoteAddress();
                 ServerStatusHandler.handleSend((InetSocketAddress) socketAddress);
                 if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("发送心跳包 [{}]", socketAddress);
-                Channel channel = ChannelProvider.get((InetSocketAddress) socketAddress, CommonSerializer.getByCode(DEFAULT_SERIALIZER.getCode()));
+                Channel channel = ChannelProvider.get((InetSocketAddress) socketAddress, Objects.requireNonNull(ExtensionFactory.getExtension(Serializer.class, DEFAULT_SERIALIZER)));
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setHeartBeat(true);
                 channel.writeAndFlush(rpcRequest).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);

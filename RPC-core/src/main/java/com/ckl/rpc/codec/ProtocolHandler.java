@@ -5,7 +5,8 @@ import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.PackageType;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
-import com.ckl.rpc.serializer.CommonSerializer;
+import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.serialize.Serializer;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,7 +37,8 @@ public class ProtocolHandler {
             throw new RpcException(RpcError.UNKNOWN_PACKAGE_TYPE);
         }
 //        获取序列化方法
-        CommonSerializer serializer = CommonSerializer.getByCode(protocol.getSerializerCode());
+        Serializer serializer = ExtensionFactory.getExtension(Serializer.class, protocol.getSerializerCode());
+//        Serializer serializer = Serializer.getByCode(protocol.getSerializerCode());
         if (serializer == null) {
             log.error("不识别的反序列化器: {}", protocol.getSerializerCode());
             throw new RpcException(RpcError.UNKNOWN_SERIALIZER);

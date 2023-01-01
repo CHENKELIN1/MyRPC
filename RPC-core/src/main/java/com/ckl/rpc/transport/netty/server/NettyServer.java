@@ -4,13 +4,13 @@ import com.ckl.rpc.codec.NettyDecoder;
 import com.ckl.rpc.codec.NettyEncoder;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.enumeration.LimiterType;
+import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.limit.Limiter;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.hook.ShutdownHook;
-import com.ckl.rpc.limiter.CounterLimitHandler;
-import com.ckl.rpc.limiter.LimitHandler;
-import com.ckl.rpc.limiter.Limiter;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
-import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.transport.AbstractRpcServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -28,20 +28,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NettyServer extends AbstractRpcServer implements DefaultConfig {
     //    序列化器
-    private final CommonSerializer serializer;
+    private final Serializer serializer;
 
     public NettyServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER.getCode(), new CounterLimitHandler(SERVER_LIMIT_COUNT));
+        this(host, port, DEFAULT_SERIALIZER.getCode(), DEFAULT_LIMITER);
     }
 
-    public NettyServer(String host, int port, Integer serializer, LimitHandler handler) {
+    public NettyServer(String host, int port, Integer serializer, LimiterType limiterType) {
         this.host = host;
         this.port = port;
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
-        this.serializer = CommonSerializer.getByCode(serializer);
+        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializer);
         this.serverStatus = new ServerStatus();
-        this.limiter = new Limiter(handler);
+        this.limiter = ExtensionFactory.getExtension(Limiter.class, limiterType);
         scanServices();
     }
 

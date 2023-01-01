@@ -1,9 +1,10 @@
-package com.ckl.rpc.serializer;
+package com.ckl.rpc.extension.serialize.serializer;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.SerializeException;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -16,7 +17,7 @@ import java.io.ByteArrayOutputStream;
  * Kryo序列化器
  */
 @Slf4j
-public class KryoSerializer implements CommonSerializer {
+public class KryoSerializer implements Serializer {
     private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
         Kryo kryo = new Kryo();
         kryo.register(RpcResponse.class);

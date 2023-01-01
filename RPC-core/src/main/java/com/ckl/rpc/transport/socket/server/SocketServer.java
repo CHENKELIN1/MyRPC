@@ -2,13 +2,14 @@ package com.ckl.rpc.transport.socket.server;
 
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.ThreadPoolFactory;
-import com.ckl.rpc.handler.RequestHandler;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
-import com.ckl.rpc.serializer.CommonSerializer;
 import com.ckl.rpc.transport.AbstractRpcServer;
+import com.ckl.rpc.transport.RequestHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
     //    线程池
     private final ExecutorService threadPool;
     //    序列化方式
-    private final CommonSerializer serializer;
+    private final Serializer serializer;
     //    请求处理器
     private final RequestHandler requestHandler = new RequestHandler();
 
@@ -39,7 +40,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
         threadPool = ThreadPoolFactory.createDefaultThreadPool("socket-rpc-server");
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
-        this.serializer = CommonSerializer.getByCode(serializer);
+        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializer);
         this.serverStatus = new ServerStatus();
         scanServices();
     }
