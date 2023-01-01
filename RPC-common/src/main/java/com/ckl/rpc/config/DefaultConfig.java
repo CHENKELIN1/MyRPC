@@ -15,6 +15,7 @@ public interface DefaultConfig {
     TransmissionType DEFAULT_TRANSMISSION = TransmissionType.NETTY;
     LoadBalanceType DEFAULT_LOAD_BALANCE = LoadBalanceType.LOAD_BALANCE_RANDOM;
     LimiterType DEFAULT_LIMITER = LimiterType.COUNTER;
+    CompressType DEFAULT_COMPRESSER = CompressType.GZIP;
     /*
      * nacos config
      * */
@@ -44,7 +45,7 @@ public interface DefaultConfig {
     boolean CLIENT_SHOW_DETAIL_RESPONSE_LOG = false;
     boolean CLIENT_SHOW_HEART_BEAT_LOG = false;
     boolean SHOW_SERVER_STATUS_LOG = false;
-    boolean LIMIT_LOG = false;
+    boolean INVOKE_LOG = false;
     /*
      * limiter config
      * */
@@ -52,5 +53,5 @@ public interface DefaultConfig {
     /*
     自定义协议
      */
-    int EXPEND_LENGTH = 19;
+    int EXPEND_LENGTH = 19 + 4;
 }

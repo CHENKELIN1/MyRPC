@@ -2,7 +2,10 @@ package com.ckl.rpc.transport.socket.server;
 
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.enumeration.CompressType;
+import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.hook.ShutdownHook;
@@ -27,20 +30,22 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
     private final ExecutorService threadPool;
     //    序列化方式
     private final Serializer serializer;
+    private final Compresser compresser;
     //    请求处理器
     private final RequestHandler requestHandler = new RequestHandler();
 
     public SocketServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER.getCode());
+        this(host, port, DEFAULT_SERIALIZER, DEFAULT_COMPRESSER);
     }
 
-    public SocketServer(String host, int port, Integer serializer) {
+    public SocketServer(String host, int port, SerializerCode serializer, CompressType compressType) {
         this.host = host;
         this.port = port;
         threadPool = ThreadPoolFactory.createDefaultThreadPool("socket-rpc-server");
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
         this.serializer = ExtensionFactory.getExtension(Serializer.class, serializer);
+        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
         this.serverStatus = new ServerStatus();
         scanServices();
     }
@@ -62,7 +67,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
             while ((socket = serverSocket.accept()) != null) {
                 log.info("消费者连接: {}:{}", socket.getInetAddress(), socket.getPort());
 //                使用线程池处理
-                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer, serverStatus));
+                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer, serverStatus, compresser));
             }
 //            关闭线程池
             threadPool.shutdown();

@@ -24,9 +24,9 @@ public class BeanFactory implements DefaultConfig {
         log.info("初始化BeanFactory...");
         RpcClient rpcClient;
         if (DEFAULT_TRANSMISSION == TransmissionType.SOCKET) {
-            rpcClient = new SocketClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE);
+            rpcClient = new SocketClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER);
         } else if (DEFAULT_TRANSMISSION == TransmissionType.NETTY) {
-            rpcClient = new NettyClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE);
+            rpcClient = new NettyClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER);
         } else {
             rpcClient = null;
         }

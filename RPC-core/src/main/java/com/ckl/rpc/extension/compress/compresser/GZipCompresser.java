@@ -1,5 +1,6 @@
 package com.ckl.rpc.extension.compress.compresser;
 
+import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.extension.compress.Compresser;
 
 import java.io.ByteArrayInputStream;
@@ -43,5 +44,10 @@ public class GZipCompresser implements Compresser {
         } catch (IOException e) {
             throw new RuntimeException("gzip decompress error", e);
         }
+    }
+
+    @Override
+    public int getCode() {
+        return CompressType.GZIP.getCode();
     }
 }

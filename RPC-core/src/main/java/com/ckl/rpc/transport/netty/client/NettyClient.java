@@ -3,11 +3,13 @@ package com.ckl.rpc.transport.netty.client;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.enumeration.LoadBalanceType;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.SingletonFactory;
@@ -48,11 +50,13 @@ public class NettyClient implements RpcClient {
     private final Serializer serializer;
     //    未处理请求
     private final UnprocessedRequests unprocessedRequests;
+    private final Compresser compresser;
 
 
-    public NettyClient(SerializerCode serializerCode, LoadBalanceType loadBalanceType) {
+    public NettyClient(SerializerCode serializerCode, LoadBalanceType loadBalanceType, CompressType compressType) {
         this.serviceDiscovery = new NacosServiceDiscovery(ExtensionFactory.getExtension(LoadBalancer.class, loadBalanceType));
         this.serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode);
+        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
 
@@ -74,7 +78,7 @@ public class NettyClient implements RpcClient {
 //            获取接口socket地址
             InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName(), rpcRequest.getGroup());
 //            获取channel
-            Channel channel = ChannelProvider.get(inetSocketAddress, serializer);
+            Channel channel = ChannelProvider.get(inetSocketAddress, serializer, compresser);
             if (!channel.isActive()) {
                 group.shutdownGracefully();
                 return null;

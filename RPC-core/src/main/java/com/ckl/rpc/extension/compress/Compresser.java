@@ -5,4 +5,6 @@ public interface Compresser {
 
 
     byte[] decompress(byte[] bytes);
+
+    int getCode();
 }

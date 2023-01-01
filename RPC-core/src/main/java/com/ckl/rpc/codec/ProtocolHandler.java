@@ -6,6 +6,7 @@ import com.ckl.rpc.enumeration.PackageType;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,12 +39,18 @@ public class ProtocolHandler {
         }
 //        获取序列化方法
         Serializer serializer = ExtensionFactory.getExtension(Serializer.class, protocol.getSerializerCode());
-//        Serializer serializer = Serializer.getByCode(protocol.getSerializerCode());
+        Compresser compresser = ExtensionFactory.getExtension(Compresser.class, protocol.getCompressCode());
         if (serializer == null) {
             log.error("不识别的反序列化器: {}", protocol.getSerializerCode());
             throw new RpcException(RpcError.UNKNOWN_SERIALIZER);
         }
+        if (compresser == null) {
+            log.error("不识别的反压缩器: {}", protocol.getSerializerCode());
+            throw new RpcException(RpcError.UNKNOWN_COMPRESS);
+        }
+        byte[] data = compresser.decompress(protocol.getData());
+        log.debug("解压缩前:{},解压缩后：{}", protocol.getData().length, data.length);
 //        反序列化得到RpcRequest或RpcResponse对象
-        return serializer.deserialize(protocol.getData(), packageClass);
+        return serializer.deserialize(data, packageClass);
     }
 }

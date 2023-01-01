@@ -1,7 +1,8 @@
 package com.ckl.rpc.transport.netty.client;
 
-import com.ckl.rpc.codec.NettyDecoder;
-import com.ckl.rpc.codec.NettyEncoder;
+import com.ckl.rpc.codec.Netty.NettyDecoder;
+import com.ckl.rpc.codec.Netty.NettyEncoder;
+import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -37,9 +38,9 @@ public class ChannelProvider {
      * @return channel
      * @throws InterruptedException
      */
-    public static Channel get(InetSocketAddress inetSocketAddress, Serializer serializer) throws InterruptedException {
+    public static Channel get(InetSocketAddress inetSocketAddress, Serializer serializer, Compresser compresser) throws InterruptedException {
 //        得到channel key
-        String key = inetSocketAddress.toString() + serializer.getCode();
+        String key = inetSocketAddress.toString() + serializer.getCode() + compresser.getCode();
         if (channels.containsKey(key)) {
             Channel channel = channels.get(key);
             if (channels != null && channel.isActive()) {
@@ -56,7 +57,7 @@ public class ChannelProvider {
             protected void initChannel(SocketChannel ch) {
                 /*自定义序列化编解码器*/
                 // RpcResponse -> ByteBuf
-                ch.pipeline().addLast(new NettyEncoder(serializer))
+                ch.pipeline().addLast(new NettyEncoder(serializer, compresser))
                         .addLast(new IdleStateHandler(0, 5, 0, TimeUnit.SECONDS))
                         .addLast(new NettyDecoder())
                         .addLast(new NettyClientHandler());

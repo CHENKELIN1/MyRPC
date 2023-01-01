@@ -1,10 +1,11 @@
 package com.ckl.rpc.transport.socket.server;
 
-import com.ckl.rpc.codec.SocketDecoder;
-import com.ckl.rpc.codec.SocketEncoder;
+import com.ckl.rpc.codec.scoket.SocketDecoder;
+import com.ckl.rpc.codec.scoket.SocketEncoder;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.transport.RequestHandler;
@@ -27,12 +28,14 @@ public class SocketRequestHandlerThread implements Runnable {
     //    序列化方式
     private final Serializer serializer;
     private final ServerStatus status;
+    private final Compresser compresser;
 
-    public SocketRequestHandlerThread(Socket socket, RequestHandler requestHandler, Serializer serializer, ServerStatus status) {
+    public SocketRequestHandlerThread(Socket socket, RequestHandler requestHandler, Serializer serializer, ServerStatus status, Compresser compresser) {
         this.socket = socket;
         this.requestHandler = requestHandler;
         this.serializer = serializer;
         this.status = status;
+        this.compresser = compresser;
     }
 
     /**
@@ -56,7 +59,7 @@ public class SocketRequestHandlerThread implements Runnable {
                 response = RpcResponse.success(result, rpcRequest.getRequestId(), ServerStatusHandler.updateStatus(status));
             }
 //            将请求写入输出流
-            SocketEncoder.writeObject(outputStream, response, serializer);
+            SocketEncoder.writeObject(outputStream, response, serializer, compresser);
         } catch (IOException e) {
             log.error("调用或发送时有错误发生：", e);
         }

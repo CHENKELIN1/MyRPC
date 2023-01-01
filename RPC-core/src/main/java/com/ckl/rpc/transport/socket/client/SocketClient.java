@@ -1,15 +1,17 @@
 package com.ckl.rpc.transport.socket.client;
 
-import com.ckl.rpc.codec.SocketDecoder;
-import com.ckl.rpc.codec.SocketEncoder;
+import com.ckl.rpc.codec.scoket.SocketDecoder;
+import com.ckl.rpc.codec.scoket.SocketEncoder;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.enumeration.LoadBalanceType;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
 import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
@@ -34,11 +36,13 @@ public class SocketClient implements RpcClient, DefaultConfig {
     private final ServiceDiscovery serviceDiscovery;
     //    序列化方式
     private final Serializer serializer;
+    private final Compresser compresser;
 
 
-    public SocketClient(SerializerCode serializerCode, LoadBalanceType loadBalanceType) {
+    public SocketClient(SerializerCode serializerCode, LoadBalanceType loadBalanceType, CompressType compressType) {
         this.serviceDiscovery = new NacosServiceDiscovery(ExtensionFactory.getExtension(LoadBalancer.class, loadBalanceType));
         this.serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode);
+        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
     }
 
     /**
@@ -63,7 +67,7 @@ public class SocketClient implements RpcClient, DefaultConfig {
             OutputStream outputStream = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
 //            写入数据
-            SocketEncoder.writeObject(outputStream, rpcRequest, serializer);
+            SocketEncoder.writeObject(outputStream, rpcRequest, serializer, compresser);
 //            读出响应数据
             Object obj = SocketDecoder.readObject(inputStream);
             RpcResponse rpcResponse = (RpcResponse) obj;

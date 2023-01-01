@@ -38,14 +38,14 @@ public class ServerMonitor {
      * @param address
      * @return
      */
-    public ServerMonitorContent getMonitorContent(InetSocketAddress address) {
+    public synchronized ServerMonitorContent getMonitorContent(InetSocketAddress address) {
         return map.get(address);
     }
 
     /**
      * 输出所有服务器状态
      */
-    public void showAllMonitorContent() {
+    public synchronized void showAllMonitorContent() {
         for (InetSocketAddress key : map.keySet()) {
             ServerMonitorContent serverMonitorContent = map.get(key);
             serverMonitorContent.cal();

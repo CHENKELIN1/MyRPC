@@ -33,8 +33,12 @@ public class ExtensionFactory {
             }
             return (T) handleSerializer(code);
         }
-        if (name.equals(Compresser.class.getName()) && o instanceof CompressType) {
-            return (T) handleCompress((CompressType) o);
+        if (name.equals(Compresser.class.getName())) {
+            int code = 0;
+            if (o instanceof CompressType) {
+                code = ((CompressType) o).getCode();
+            }
+            return (T) handleCompress(code);
         }
         return null;
     }
@@ -72,8 +76,8 @@ public class ExtensionFactory {
         return null;
     }
 
-    private static Compresser handleCompress(CompressType o) {
-        if (o == CompressType.GZIP) {
+    private static Compresser handleCompress(int o) {
+        if (o == CompressType.GZIP.getCode()) {
             return new GZipCompresser();
         }
         return null;

@@ -113,7 +113,7 @@ Data            DataLength  传输数据
     package com.ckl.rpc.server;
     
     import com.ckl.rpc.annotation.MyRpcServiceScan;
-    import com.ckl.rpc.serializer.CommonSerializer;
+    import com.ckl.rpc.serialize.CommonSerializer;
     import com.ckl.rpc.transport.RpcServer;
     import com.ckl.rpc.transport.netty.server.NettyServer;
     

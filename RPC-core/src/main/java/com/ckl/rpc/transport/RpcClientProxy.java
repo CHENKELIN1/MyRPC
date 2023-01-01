@@ -1,5 +1,6 @@
 package com.ckl.rpc.transport;
 
+import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.transport.netty.client.NettyClient;
@@ -49,7 +50,8 @@ public class RpcClientProxy {
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) {
-            log.info("调用方法: {}#{}", method.getDeclaringClass().getName(), method.getName());
+            if (DefaultConfig.INVOKE_LOG)
+                log.info("调用方法: {}#{}", method.getDeclaringClass().getName(), method.getName());
 //          创建RpcRequest
             RpcRequest rpcRequest = new RpcRequest()
                     .setRequestId(UUID.randomUUID().toString())
