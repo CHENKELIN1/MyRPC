@@ -42,7 +42,7 @@ public class NacosServiceDiscovery implements ServiceDiscovery {
                 throw new RpcException(RpcError.SERVICE_NOT_FOUND);
             }
 //            选取一个服务实例
-            Instance instance = loadBalancer.select(instances,rpcRequest);
+            Instance instance = loadBalancer.select(instances, rpcRequest);
             return new InetSocketAddress(instance.getIp(), instance.getPort());
         } catch (NacosException e) {
             log.error("获取服务时有错误发生:", e);

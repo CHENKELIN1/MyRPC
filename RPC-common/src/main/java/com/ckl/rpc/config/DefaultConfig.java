@@ -14,7 +14,7 @@ public interface DefaultConfig {
     SerializerCode DEFAULT_SERIALIZER = SerializerCode.KRYO;
     TransmissionType DEFAULT_TRANSMISSION = TransmissionType.NETTY;
     LoadBalanceType DEFAULT_LOAD_BALANCE = LoadBalanceType.LOAD_BALANCE_CONSISTENT_HASH;
-    LimiterType DEFAULT_LIMITER = LimiterType.COUNTER;
+    LimiterType DEFAULT_LIMITER = LimiterType.TOKEN_BUCKET;
     CompressType DEFAULT_COMPRESSER = CompressType.GZIP;
     /*
      * nacos config
@@ -50,6 +50,10 @@ public interface DefaultConfig {
      * limiter config
      * */
     int LIMIT_COUNTER_LIMITER_COUNT = 5;
+    int LIMIT_FUNNEL_CAPACITY = 10;
+    double LIMIT_FUNNEL_LEAKING_RATE = 5;
+    int LIMIT_TOKEN_BUCKET_CAPACITY = 10;
+    int LIMIT_TOKEN_BUCKET_RATE = 5;
     /*
     自定义协议
      */

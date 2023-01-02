@@ -31,7 +31,7 @@ public class BeanFactory implements DefaultConfig {
             rpcClient = null;
         }
         rpcClientProxy = new RpcClientProxy(rpcClient);
-        log.info("初始化完成:负载均衡器:{},序列化器:{},压缩工具：{}",DEFAULT_LOAD_BALANCE,DEFAULT_SERIALIZER,DEFAULT_COMPRESSER);
+        log.info("初始化完成:负载均衡器:{},序列化器:{},压缩工具：{}", DEFAULT_LOAD_BALANCE, DEFAULT_SERIALIZER, DEFAULT_COMPRESSER);
     }
 
     /**

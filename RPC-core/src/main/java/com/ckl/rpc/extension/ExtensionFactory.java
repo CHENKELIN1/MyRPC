@@ -8,6 +8,8 @@ import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.compress.compresser.GZipCompresser;
 import com.ckl.rpc.extension.limit.Limiter;
 import com.ckl.rpc.extension.limit.limiter.CounterLimiter;
+import com.ckl.rpc.extension.limit.limiter.FunnelRateLimiter;
+import com.ckl.rpc.extension.limit.limiter.TokenBucket;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 import com.ckl.rpc.extension.loadbalance.loadbalancer.AdaptiveLoadBalancer;
 import com.ckl.rpc.extension.loadbalance.loadbalancer.ConsistentHashLoadBalancer;
@@ -48,6 +50,12 @@ public class ExtensionFactory {
         if (o == LimiterType.COUNTER) {
             return new CounterLimiter();
         }
+        if (o == LimiterType.FUNNEL_RATE) {
+            return new FunnelRateLimiter();
+        }
+        if (o == LimiterType.TOKEN_BUCKET) {
+            return new TokenBucket();
+        }
         return null;
     }
 
@@ -61,7 +69,7 @@ public class ExtensionFactory {
         if (o == LoadBalanceType.LOAD_BALANCE_ADAPTIVE) {
             return new AdaptiveLoadBalancer();
         }
-        if (o == LoadBalanceType.LOAD_BALANCE_CONSISTENT_HASH){
+        if (o == LoadBalanceType.LOAD_BALANCE_CONSISTENT_HASH) {
             return new ConsistentHashLoadBalancer();
         }
         return null;
