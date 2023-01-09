@@ -2,53 +2,19 @@
 
 实现一个简单的RPC框架
 
-## 项目结构
-
-```.
-├── RPC-api:接口
-├── RPC-client:客户端测试
-├── RPC-common:通用类
-│ └── src.main.java.com.ckl.rpc
-│                         ├── config:配置类
-│                         ├── entity:实体类
-│                         ├── enumeration:枚举类
-│                         ├── exception:异常类
-│                         ├── factory:工厂类
-│                         └── util:工具类
-├── RPC-core:核心功能
-│ └── src.main.java.com.ckl.rpc
-│                         ├── annotation:自定义注解
-│                         ├── bean:接口管理
-│                         ├── codec:编码译码器
-│                         ├── handler:处理器
-│                         ├── hook:钩子函数
-│                         ├── limiter:限制器
-│                         ├── loadbalancer:负载均衡器
-│                         ├── provider:服务提供
-│                         ├── registry:服务注册
-│                         ├── serializer:序列化器
-│                         ├── status:服务器状态
-│                         └── transport:通信方式
-│                             ├── netty:netty通信
-│                             │ ├── client:客户端
-│                             │ └── server:服务端
-│                             └── socket:socket通信
-│                                 ├── client:客户端
-│                                 └── server:服务端
-└── RPC-server:服务端测试
-```
-
 ## 协议说明
 
 采用自定义协议防止粘包
 
 ```
-MagicNumber     4bytes      自定义协议标识
-PackageType     4bytes      包类型
-SerializerType  4bytes      序列化方式
-DataLength      4bytes      数据长度
-Undefined       16bytes     可扩展协议
-Data            DataLength  传输数据   
+MagicNumber     4bytes        自定义协议标识
+PackageType     4bytes        包类型
+SerializerType  4bytes        序列化方式
+CompressCode    4bytes        压缩方式
+DataLength      4bytes        数据长度
+ExpandLength    4bytes        扩展协议长度
+ExpandData      expandLength  扩展协议内容
+Data            DataLength    传输数据   
 ```
 
 ## 功能实现
@@ -69,7 +35,7 @@ Data            DataLength  传输数据
 14. 自适应负载均衡
 15. 业务分组
 16. 健康检测
-17. 熔断限流
+17. 服务限流
 
 ## 项目运行
 
@@ -95,11 +61,6 @@ Data            DataLength  传输数据
     ```
 2. 服务端实现接口
     ```java
-    package com.ckl.rpc.server;
-   
-    import com.ckl.rpc.annotation.MyRpcService;
-    import com.ckl.rpc.api.MyTest;
-   
     @MyRpcService
     public class MyTestImpl implements MyTest {
         @Override
@@ -110,13 +71,6 @@ Data            DataLength  传输数据
     ```
 3. 服务提供者
     ```java
-    package com.ckl.rpc.server;
-    
-    import com.ckl.rpc.annotation.MyRpcServiceScan;
-    import com.ckl.rpc.serializer.CommonSerializer;
-    import com.ckl.rpc.transport.RpcServer;
-    import com.ckl.rpc.transport.netty.server.NettyServer;
-    
     @MyRpcServiceScan
     public class TestNettyServer {
         public static void main(String[] args) {
@@ -128,16 +82,6 @@ Data            DataLength  传输数据
 4. 客户端远程调用
 
    ```java
-   package com.ckl.rpc;
-   
-   import com.ckl.rpc.api.HelloObject;
-   import com.ckl.rpc.api.HelloService;
-   import com.ckl.rpc.api.MyTest;
-   import com.ckl.rpc.bean.BeanFactory;
-   import com.ckl.rpc.config.DefaultConfig;
-   import com.ckl.rpc.factory.SingletonFactory;
-   import com.ckl.rpc.status.ServerMonitor;
-   
    public class TestNettyClientSingle {
        public static void main(String[] args) {
    //        远程过程调用接口1
@@ -170,8 +114,8 @@ Data            DataLength  传输数据
 
 ### 深入学习
 
-- [ ] Netty相关内容
-- [ ] 注解反射相关内容
+- [x] Netty相关内容
+- [x] 注解反射相关内容
 - [x] 动态代理相关内容
 - [ ] Nacos相关内容
 - [ ] 钩子函数相关内容
@@ -182,7 +126,8 @@ Data            DataLength  传输数据
 - v1.0:实现基础远程调用;
 - v2.0:实现多种序列化器;采用Netty通信;
 - v3.0:实现Nacos服务注册发现;负载均衡;自动注册;连接复用;
-- v4.0:实现可扩展协议;业务分组;健康检测;熔断限流;
+- v4.0:实现可扩展协议;业务分组;健康检测;服务限流;
+- v5.0:优化项目结构;修复错误;扩展负载均衡、服务限流;数据压缩;docs
 
 ### 参考
 

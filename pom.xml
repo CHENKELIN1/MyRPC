@@ -12,8 +12,8 @@
         <module>RPC-core</module>
         <module>RPC-api</module>
         <module>RPC-common</module>
-        <module>RPC-client</module>
-        <module>RPC-server</module>
+        <module>test-client</module>
+        <module>test-server</module>
     </modules>
     <properties>
         <java.version>11</java.version>

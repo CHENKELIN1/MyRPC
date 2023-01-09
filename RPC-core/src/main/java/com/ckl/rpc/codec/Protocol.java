@@ -23,16 +23,21 @@ public class Protocol {
     public static final int INT_LENGTH = 4;
     //    协议固定长度
     public static final int PROTOCOL_STATIC_LENGTH = 32;
+    //    扩展协议
+    ExpendProtocol expendProtocol;
     //    自定义协议标识
     private int magicNumber;
     //    包类型
     private int packageCode;
     //    序列化方式
     private int serializerCode;
+    private int compressCode;
     //    数据长度
     private int dataLength;
-    //    为定义协议
-    private byte[] undefined;
+    //    协议头长度
+    private int expandLength;
+    //    扩展内容
+    private byte[] expandData;
     //    数据
     private byte[] data;
 
@@ -45,11 +50,14 @@ public class Protocol {
         this.magicNumber = in.readInt();
         this.packageCode = in.readInt();
         this.serializerCode = in.readInt();
+        this.compressCode = in.readInt();
         this.dataLength = in.readInt();
-        undefined = new byte[UNDEFINED_LENGTH];
-        in.readBytes(undefined);
+        this.expandLength = in.readInt();
+        this.expandData = new byte[expandLength];
+        in.readBytes(expandData);
         data = new byte[dataLength];
         in.readBytes(data);
+        this.expendProtocol = ExpendProtocol.expendProtocolHandleRead(expandData);
     }
 
     /**
@@ -59,28 +67,28 @@ public class Protocol {
      * @throws IOException
      */
     public Protocol(InputStream in) throws IOException {
+//        固定协议头
         byte[] buffer = new byte[INT_LENGTH];
         in.read(buffer);
-        this.magicNumber = bytesToInt(buffer);
+        this.magicNumber = DecodeUtil.bytesToInt(buffer);
         in.read(buffer);
-        this.packageCode = bytesToInt(buffer);
+        this.packageCode = DecodeUtil.bytesToInt(buffer);
         in.read(buffer);
-        this.serializerCode = bytesToInt(buffer);
+        this.serializerCode = DecodeUtil.bytesToInt(buffer);
         in.read(buffer);
-        this.dataLength = bytesToInt(buffer);
-        undefined = new byte[UNDEFINED_LENGTH];
-        in.read(undefined);
+        this.compressCode = DecodeUtil.bytesToInt(buffer);
+        in.read(buffer);
+        this.dataLength = DecodeUtil.bytesToInt(buffer);
+        in.read(buffer);
+//        扩展协议
+        this.expandLength = DecodeUtil.bytesToInt(buffer);
+        byte[] expandData = new byte[expandLength];
+        in.read(expandData);
+        this.expandData = expandData;
+//        数据
         byte[] data = new byte[this.dataLength];
         in.read(data);
         this.data = data;
-    }
-
-    public static int bytesToInt(byte[] src) {
-        int value;
-        value = ((src[0] & 0xFF) << 24)
-                | ((src[1] & 0xFF) << 16)
-                | ((src[2] & 0xFF) << 8)
-                | (src[3] & 0xFF);
-        return value;
+        this.expendProtocol = ExpendProtocol.expendProtocolHandleRead(expandData);
     }
 }

@@ -4,9 +4,11 @@ import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.ResponseCode;
+import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.compress.Compresser;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.status.ServerStatusHandler;
+import com.ckl.rpc.status.StatusHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -38,19 +40,19 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
      * @param ctx the {@link ChannelHandlerContext} which this {@link SimpleChannelInboundHandler}
      *            belongs to
      * @param msg the message to handle
-     * @throws Exception
+     * @throws Exception e
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg) throws Exception {
         try {
 //            服务器状态处理
-            ServerStatusHandler.handleReceived(msg, (InetSocketAddress) ctx.channel().remoteAddress());
+            StatusHandler.ClientHandleReceived(msg, (InetSocketAddress) ctx.channel().remoteAddress());
 //            心跳报文
             if (msg.getCode() == ResponseCode.HEART_BEAT.getCode()) {
-                if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("收到服务器状态: " + msg.getStatus().toString());
+                log.debug("收到服务器状态: " + msg.getStatus().toString());
             } else {
 //                请求报文
-                if (DefaultConfig.CLIENT_SHOW_DETAIL_RESPONSE_LOG) log.info(String.format("客户端接收到消息: %s", msg));
+                log.debug(String.format("客户端接收到消息: %s", msg));
                 unprocessedRequests.complete(msg);
             }
         } finally {
@@ -68,9 +70,9 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
     /**
      * 状态监控操作：发送心跳报文
      *
-     * @param ctx
-     * @param evt
-     * @throws Exception
+     * @param ctx ctx
+     * @param evt evt
+     * @throws Exception e
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
@@ -78,9 +80,11 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.WRITER_IDLE) {
                 SocketAddress socketAddress = ctx.channel().remoteAddress();
-                ServerStatusHandler.handleSend((InetSocketAddress) socketAddress);
-                if (DefaultConfig.CLIENT_SHOW_HEART_BEAT_LOG) log.info("发送心跳包 [{}]", socketAddress);
-                Channel channel = ChannelProvider.get((InetSocketAddress) socketAddress, CommonSerializer.getByCode(DEFAULT_SERIALIZER.getCode()));
+                StatusHandler.ServerHandleSend((InetSocketAddress) socketAddress);
+                log.info("发送心跳包 [{}]", socketAddress);
+                Serializer serializer = ExtensionFactory.getExtension(Serializer.class, DEFAULT_SERIALIZER);
+                Compresser compresser = ExtensionFactory.getExtension(Compresser.class, DEFAULT_SERIALIZER);
+                Channel channel = ChannelProvider.get((InetSocketAddress) socketAddress, serializer, compresser);
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setHeartBeat(true);
                 channel.writeAndFlush(rpcRequest).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);

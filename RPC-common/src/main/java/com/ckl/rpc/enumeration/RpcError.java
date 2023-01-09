@@ -17,12 +17,14 @@ public enum RpcError {
     SERVICE_NOT_IMPLEMENT_ANY_INTERFACE("注册的服务未实现接口"),
     UNKNOWN_PROTOCOL("不识别的协议包"),
     UNKNOWN_SERIALIZER("不识别的(反)序列化器"),
+    UNKNOWN_COMPRESS("不识别压缩器"),
     UNKNOWN_PACKAGE_TYPE("不识别的数据包类型"),
     SERIALIZER_NOT_FOUND("找不到序列化器"),
     RESPONSE_NOT_MATCH("响应与请求号不匹配"),
     FAILED_TO_CONNECT_TO_SERVICE_REGISTRY("连接注册中心失败"),
     REGISTER_SERVICE_FAILED("注册服务失败"),
     CLIENT_BUSY("客户端繁忙"),
-    PROTOCOL_DECODER_ERROR("协议解析出错");
+    PROTOCOL_DECODER_ERROR("协议解析出错"),
+    CHANNEL_NOT_ACTIVE("channel连接失效");
     private final String message;
 }

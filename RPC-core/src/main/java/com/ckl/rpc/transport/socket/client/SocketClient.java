@@ -1,20 +1,23 @@
 package com.ckl.rpc.transport.socket.client;
 
-import com.ckl.rpc.codec.SocketDecoder;
-import com.ckl.rpc.codec.SocketEncoder;
+import com.ckl.rpc.codec.scoket.SocketDecoder;
+import com.ckl.rpc.codec.scoket.SocketEncoder;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.enumeration.LoadBalanceType;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.RpcException;
-import com.ckl.rpc.loadbalancer.LoadBalancer;
+import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.compress.Compresser;
+import com.ckl.rpc.extension.loadbalance.LoadBalancer;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
-import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.status.ServerStatusHandler;
-import com.ckl.rpc.transport.RpcClient;
+import com.ckl.rpc.status.StatusHandler;
+import com.ckl.rpc.transport.common.client.RpcClient;
 import com.ckl.rpc.util.RpcMessageChecker;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,23 +35,14 @@ public class SocketClient implements RpcClient, DefaultConfig {
     //    服务发现者
     private final ServiceDiscovery serviceDiscovery;
     //    序列化方式
-    private final CommonSerializer serializer;
+    private final Serializer serializer;
+    private final Compresser compresser;
 
-    public SocketClient() {
-        this(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE);
-    }
 
-    public SocketClient(LoadBalanceType loadBalancer) {
-        this(DEFAULT_SERIALIZER, loadBalancer);
-    }
-
-    public SocketClient(SerializerCode serializer) {
-        this(serializer, DEFAULT_LOAD_BALANCE);
-    }
-
-    public SocketClient(SerializerCode serializer, LoadBalanceType loadBalancer) {
-        this.serviceDiscovery = new NacosServiceDiscovery(LoadBalancer.getByType(loadBalancer));
-        this.serializer = CommonSerializer.getByType(serializer);
+    public SocketClient(SerializerCode serializerCode, LoadBalanceType loadBalanceType, CompressType compressType) {
+        this.serviceDiscovery = new NacosServiceDiscovery(ExtensionFactory.getExtension(LoadBalancer.class, loadBalanceType));
+        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode);
+        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
     }
 
     /**
@@ -65,21 +59,21 @@ public class SocketClient implements RpcClient, DefaultConfig {
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
 //        查询服务socket地址
-        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName(), rpcRequest.getGroup());
+        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
 //        创建socket连接
         try (Socket socket = new Socket()) {
             socket.connect(inetSocketAddress);
-            ServerStatusHandler.handleSend(inetSocketAddress);
+            StatusHandler.ServerHandleSend(inetSocketAddress);
             OutputStream outputStream = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
 //            写入数据
-            SocketEncoder.writeObject(outputStream, rpcRequest, serializer);
+            SocketEncoder.writeObject(outputStream, rpcRequest, serializer, compresser);
 //            读出响应数据
             Object obj = SocketDecoder.readObject(inputStream);
             RpcResponse rpcResponse = (RpcResponse) obj;
 //            响应检查
             RpcMessageChecker.check(rpcRequest, rpcResponse);
-            ServerStatusHandler.handleReceived(rpcResponse, inetSocketAddress);
+            StatusHandler.ClientHandleReceived(rpcResponse, inetSocketAddress);
             return rpcResponse;
         } catch (IOException e) {
             log.error("调用时有错误发生：", e);

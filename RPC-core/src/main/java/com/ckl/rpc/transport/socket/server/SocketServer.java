@@ -1,14 +1,18 @@
 package com.ckl.rpc.transport.socket.server;
 
 import com.ckl.rpc.config.DefaultConfig;
-import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.entity.Status;
+import com.ckl.rpc.enumeration.CompressType;
+import com.ckl.rpc.enumeration.SerializerCode;
+import com.ckl.rpc.extension.ExtensionFactory;
+import com.ckl.rpc.extension.compress.Compresser;
+import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.ThreadPoolFactory;
-import com.ckl.rpc.handler.RequestHandler;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProviderImpl;
 import com.ckl.rpc.registry.NacosServiceRegistry;
-import com.ckl.rpc.serializer.CommonSerializer;
-import com.ckl.rpc.transport.AbstractRpcServer;
+import com.ckl.rpc.transport.common.handler.RequestHandler;
+import com.ckl.rpc.transport.common.server.AbstractRpcServer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -25,22 +29,24 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
     //    线程池
     private final ExecutorService threadPool;
     //    序列化方式
-    private final CommonSerializer serializer;
+    private final Serializer serializer;
+    private final Compresser compresser;
     //    请求处理器
     private final RequestHandler requestHandler = new RequestHandler();
 
     public SocketServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER.getCode());
+        this(host, port, DEFAULT_SERIALIZER, DEFAULT_COMPRESSER);
     }
 
-    public SocketServer(String host, int port, Integer serializer) {
+    public SocketServer(String host, int port, SerializerCode serializer, CompressType compressType) {
         this.host = host;
         this.port = port;
         threadPool = ThreadPoolFactory.createDefaultThreadPool("socket-rpc-server");
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
-        this.serializer = CommonSerializer.getByCode(serializer);
-        this.serverStatus = new ServerStatus();
+        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializer);
+        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
+        this.status = new Status();
         scanServices();
     }
 
@@ -61,7 +67,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
             while ((socket = serverSocket.accept()) != null) {
                 log.info("消费者连接: {}:{}", socket.getInetAddress(), socket.getPort());
 //                使用线程池处理
-                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer, serverStatus));
+                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer, status, compresser));
             }
 //            关闭线程池
             threadPool.shutdown();
