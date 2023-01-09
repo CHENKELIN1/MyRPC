@@ -61,11 +61,6 @@ Data            DataLength    传输数据
     ```
 2. 服务端实现接口
     ```java
-    package com.ckl.rpc.server;
-   
-    import com.ckl.rpc.annotation.MyRpcService;
-    import com.ckl.rpc.api.MyTest;
-   
     @MyRpcService
     public class MyTestImpl implements MyTest {
         @Override
@@ -76,13 +71,6 @@ Data            DataLength    传输数据
     ```
 3. 服务提供者
     ```java
-    package com.ckl.rpc.server;
-    
-    import com.ckl.rpc.annotation.MyRpcServiceScan;
-    import com.ckl.rpc.serialize.CommonSerializer;
-    import com.ckl.rpc.transport.server.RpcServer;
-    import com.ckl.rpc.transport.netty.server.NettyServer;
-    
     @MyRpcServiceScan
     public class TestNettyServer {
         public static void main(String[] args) {
@@ -94,16 +82,6 @@ Data            DataLength    传输数据
 4. 客户端远程调用
 
    ```java
-   package com.ckl.rpc;
-   
-   import com.ckl.rpc.api.HelloObject;
-   import com.ckl.rpc.api.HelloService;
-   import com.ckl.rpc.api.MyTest;
-   import com.ckl.rpc.bean.BeanFactory;
-   import com.ckl.rpc.config.DefaultConfig;
-   import com.ckl.rpc.factory.SingletonFactory;
-   import com.ckl.rpc.status.ClientMonitor;
-   
    public class TestNettyClientSingle {
        public static void main(String[] args) {
    //        远程过程调用接口1
@@ -136,8 +114,8 @@ Data            DataLength    传输数据
 
 ### 深入学习
 
-- [ ] Netty相关内容
-- [ ] 注解反射相关内容
+- [x] Netty相关内容
+- [x] 注解反射相关内容
 - [x] 动态代理相关内容
 - [ ] Nacos相关内容
 - [ ] 钩子函数相关内容
@@ -149,7 +127,7 @@ Data            DataLength    传输数据
 - v2.0:实现多种序列化器;采用Netty通信;
 - v3.0:实现Nacos服务注册发现;负载均衡;自动注册;连接复用;
 - v4.0:实现可扩展协议;业务分组;健康检测;服务限流;
-- v5.0:优化项目结构;修复错误;扩展负载均衡、服务限流;数据压缩
+- v5.0:优化项目结构;修复错误;扩展负载均衡、服务限流;数据压缩;docs
 
 ### 参考
 
