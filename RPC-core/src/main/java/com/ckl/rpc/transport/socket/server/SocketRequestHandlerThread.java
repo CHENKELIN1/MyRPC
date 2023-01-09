@@ -4,10 +4,9 @@ import com.ckl.rpc.codec.scoket.SocketDecoder;
 import com.ckl.rpc.codec.scoket.SocketEncoder;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
-import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.entity.Status;
 import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
-import com.ckl.rpc.status.ServerStatusHandler;
 import com.ckl.rpc.transport.common.handler.RequestHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,10 +26,10 @@ public class SocketRequestHandlerThread implements Runnable {
     private final RequestHandler requestHandler;
     //    序列化方式
     private final Serializer serializer;
-    private final ServerStatus status;
+    private final Status status;
     private final Compresser compresser;
 
-    public SocketRequestHandlerThread(Socket socket, RequestHandler requestHandler, Serializer serializer, ServerStatus status, Compresser compresser) {
+    public SocketRequestHandlerThread(Socket socket, RequestHandler requestHandler, Serializer serializer, Status status, Compresser compresser) {
         this.socket = socket;
         this.requestHandler = requestHandler;
         this.serializer = serializer;
@@ -49,15 +48,7 @@ public class SocketRequestHandlerThread implements Runnable {
 //            读取输入
             RpcRequest rpcRequest = (RpcRequest) SocketDecoder.readObject(inputStream);
 //            处理Rpc请求
-            Object result = requestHandler.handle(rpcRequest);
-            RpcResponse<Object> response;
-            if (result instanceof RpcResponse) {
-                response = (RpcResponse<Object>) result;
-                response.setStatus(ServerStatusHandler.updateStatus(status));
-            } else {
-                //            响应请求
-                response = RpcResponse.success(result, rpcRequest.getRequestId(), ServerStatusHandler.updateStatus(status));
-            }
+            RpcResponse<Object> response = requestHandler.handle(rpcRequest, status);
 //            将请求写入输出流
             SocketEncoder.writeObject(outputStream, response, serializer, compresser);
         } catch (IOException e) {

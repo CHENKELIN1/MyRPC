@@ -1,11 +1,12 @@
 package com.ckl.rpc.transport.common.handler;
 
-import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
+import com.ckl.rpc.entity.Status;
 import com.ckl.rpc.enumeration.ResponseCode;
 import com.ckl.rpc.provider.ServiceProvider;
 import com.ckl.rpc.provider.ServiceProviderImpl;
+import com.ckl.rpc.status.StatusHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,11 +30,11 @@ public class RequestHandler {
      * @param rpcRequest 请求体
      * @return 请求结果
      */
-    public Object handle(RpcRequest rpcRequest) {
+    public RpcResponse<Object> handle(RpcRequest rpcRequest, Status status) {
 //        根据请求获取服务对象
         Object service = serviceProvider.getServiceProvider(rpcRequest.getServiceName(), rpcRequest.getGroup());
 //        调用目标方法
-        return invokeTargetMethod(rpcRequest, service);
+        return invokeTargetMethod(rpcRequest, service, status);
     }
 
     /**
@@ -43,7 +44,7 @@ public class RequestHandler {
      * @param service    服务对象
      * @return 请求结果
      */
-    private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) {
+    private RpcResponse<Object> invokeTargetMethod(RpcRequest rpcRequest, Object service, Status status) {
 //        处理结果
         Object result;
         try {
@@ -51,8 +52,7 @@ public class RequestHandler {
             Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
 //            调用方法
             result = method.invoke(service, rpcRequest.getParameters());
-            if (DefaultConfig.INVOKE_LOG)
-                log.info("服务:{} 成功调用方法:{}", rpcRequest.getServiceName(), rpcRequest.getMethodName());
+            log.info("服务:{} 成功调用方法:{}", rpcRequest.getServiceName(), rpcRequest.getMethodName());
         } catch (NoSuchMethodException e) {
             return RpcResponse.fail(ResponseCode.NOT_FOUND_METHOD, rpcRequest.getRequestId());
         } catch (IllegalAccessException e) {
@@ -60,6 +60,6 @@ public class RequestHandler {
         } catch (InvocationTargetException e) {
             return RpcResponse.fail(ResponseCode.INVOCATION_TARGET_EXCEPTION, rpcRequest.getRequestId());
         }
-        return result;
+        return RpcResponse.success(result, rpcRequest.getRequestId(), StatusHandler.ServerUpdateStatus(status));
     }
 }

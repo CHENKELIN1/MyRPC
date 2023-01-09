@@ -36,17 +36,6 @@ public interface DefaultConfig {
     long NETTY_ALL_IDLE_TIME = 60;
     TimeUnit NETTY_IDLE_TIME_UNIT = TimeUnit.SECONDS;
     /*
-     * log config
-     * */
-    boolean SERVER_SHOW_DETAIL_REQUEST_LOG = false;
-    boolean SERVER_SHOW_DETAIL_RESPONSE_LOG = false;
-    boolean SERVER_SHOW_HEART_BEAT_LOG = false;
-    boolean CLIENT_SHOW_DETAIL_REQUEST_LOG = false;
-    boolean CLIENT_SHOW_DETAIL_RESPONSE_LOG = false;
-    boolean CLIENT_SHOW_HEART_BEAT_LOG = false;
-    boolean SHOW_SERVER_STATUS_LOG = false;
-    boolean INVOKE_LOG = false;
-    /*
      * limiter config
      * */
     int LIMIT_COUNTER_LIMITER_COUNT = 5;

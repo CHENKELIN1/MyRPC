@@ -6,7 +6,7 @@ import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.bean.BeanFactory;
 import com.ckl.rpc.enumeration.GroupName;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.status.ServerMonitor;
+import com.ckl.rpc.status.ClientMonitor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -21,6 +21,6 @@ public class TestSocketClient {
 //        测试接口2
         MyTest myTest = BeanFactory.getBean(MyTest.class, GroupName.GROUP_0);
         myTest.getData();
-        SingletonFactory.getInstance(ServerMonitor.class).showAllMonitorContent();
+        SingletonFactory.getInstance(ClientMonitor.class).showAllMonitorContent();
     }
 }

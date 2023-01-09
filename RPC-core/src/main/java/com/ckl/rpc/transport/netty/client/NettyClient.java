@@ -1,6 +1,5 @@
 package com.ckl.rpc.transport.netty.client;
 
-import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.CompressType;
@@ -15,14 +14,10 @@ import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.SingletonFactory;
 import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
-import com.ckl.rpc.status.ServerStatusHandler;
+import com.ckl.rpc.status.StatusHandler;
 import com.ckl.rpc.transport.common.client.RpcClient;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -34,15 +29,6 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 public class NettyClient implements RpcClient {
-    private static final EventLoopGroup group;
-    private static final Bootstrap bootstrap;
-
-    static {
-        group = new NioEventLoopGroup();
-        bootstrap = new Bootstrap();
-        bootstrap.group(group)
-                .channel(NioSocketChannel.class);
-    }
 
     //    服务发现者
     private final ServiceDiscovery serviceDiscovery;
@@ -79,19 +65,17 @@ public class NettyClient implements RpcClient {
             InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
 //            获取channel
             Channel channel = ChannelProvider.get(inetSocketAddress, serializer, compresser);
-            if (!channel.isActive()) {
-                group.shutdownGracefully();
+            if (channel == null) {
                 return null;
             }
 //            服务器状态处理
-            ServerStatusHandler.handleSend(inetSocketAddress);
+            StatusHandler.ServerHandleSend(inetSocketAddress);
 //            将请求放入未处理请求容器中
             unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);
 //            使用future处理
             channel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener) future1 -> {
                 if (future1.isSuccess()) {
-                    if (DefaultConfig.CLIENT_SHOW_DETAIL_REQUEST_LOG)
-                        log.info(String.format("客户端发送消息: %s", rpcRequest));
+                    log.debug(String.format("客户端发送消息: %s", rpcRequest));
                 } else {
                     future1.channel().close();
                     resultFuture.completeExceptionally(future1.cause());

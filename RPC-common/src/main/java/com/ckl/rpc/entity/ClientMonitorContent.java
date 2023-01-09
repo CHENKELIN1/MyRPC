@@ -13,7 +13,7 @@ import java.net.InetSocketAddress;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServerMonitorContent {
+public class ClientMonitorContent {
     //    已发送包数量
     int sendCount;
     //    已收到包数量
@@ -23,7 +23,7 @@ public class ServerMonitorContent {
     //    服务器地址
     InetSocketAddress address;
     //    服务器状态
-    ServerStatus serverStatus;
+    Status status;
 
     /**
      * 增加sendCount

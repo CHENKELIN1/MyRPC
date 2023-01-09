@@ -12,13 +12,13 @@ import java.lang.management.OperatingSystemMXBean;
  */
 @Data
 @Accessors(chain = true)
-public class ServerStatus implements Serializable {
+public class Status implements Serializable {
     //    接收到请求数量
     private int receivedCount;
     //    cpu使用率
     private double cpuLoad;
 
-    public ServerStatus() {
+    public Status() {
         OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();
         this.cpuLoad = osmxb.getSystemLoadAverage();
     }

@@ -6,7 +6,7 @@ import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.bean.BeanFactory;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.status.ServerMonitor;
+import com.ckl.rpc.status.ClientMonitor;
 
 /**
  * Netty客户端简单测试用例
@@ -19,6 +19,6 @@ public class TestNettyClientSingle {
 //        远程过程调用接口2
         MyTest myTest = BeanFactory.getBean(MyTest.class, DefaultConfig.DEFAULT_GROUP);
         System.out.println(myTest.getData());
-        SingletonFactory.getInstance(ServerMonitor.class).showAllMonitorContent();
+        SingletonFactory.getInstance(ClientMonitor.class).showAllMonitorContent();
     }
 }

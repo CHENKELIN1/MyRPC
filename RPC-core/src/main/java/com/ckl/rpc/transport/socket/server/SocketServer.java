@@ -1,7 +1,7 @@
 package com.ckl.rpc.transport.socket.server;
 
 import com.ckl.rpc.config.DefaultConfig;
-import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.entity.Status;
 import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.extension.ExtensionFactory;
@@ -46,7 +46,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
         this.serviceProvider = new ServiceProviderImpl();
         this.serializer = ExtensionFactory.getExtension(Serializer.class, serializer);
         this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
-        this.serverStatus = new ServerStatus();
+        this.status = new Status();
         scanServices();
     }
 
@@ -67,7 +67,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
             while ((socket = serverSocket.accept()) != null) {
                 log.info("消费者连接: {}:{}", socket.getInetAddress(), socket.getPort());
 //                使用线程池处理
-                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer, serverStatus, compresser));
+                threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer, status, compresser));
             }
 //            关闭线程池
             threadPool.shutdown();

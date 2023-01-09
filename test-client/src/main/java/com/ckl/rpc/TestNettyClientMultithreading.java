@@ -4,7 +4,7 @@ import com.ckl.rpc.api.MyTest;
 import com.ckl.rpc.bean.BeanFactory;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.status.ServerMonitor;
+import com.ckl.rpc.status.ClientMonitor;
 
 import java.util.Random;
 
@@ -35,7 +35,7 @@ public class TestNettyClientMultithreading {
         }
         while (true) {
             Thread.sleep(1000 * 5);
-            SingletonFactory.getInstance(ServerMonitor.class).showAllMonitorContent();
+            SingletonFactory.getInstance(ClientMonitor.class).showAllMonitorContent();
         }
     }
 }

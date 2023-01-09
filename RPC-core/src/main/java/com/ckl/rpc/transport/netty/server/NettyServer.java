@@ -3,7 +3,7 @@ package com.ckl.rpc.transport.netty.server;
 import com.ckl.rpc.codec.Netty.NettyDecoder;
 import com.ckl.rpc.codec.Netty.NettyEncoder;
 import com.ckl.rpc.config.DefaultConfig;
-import com.ckl.rpc.entity.ServerStatus;
+import com.ckl.rpc.entity.Status;
 import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.enumeration.LimiterType;
 import com.ckl.rpc.enumeration.SerializerCode;
@@ -41,12 +41,12 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
     public NettyServer(String host, int port, SerializerCode serializerCode, LimiterType limiterType, CompressType compressType) {
         this.host = host;
         this.port = port;
-        serviceRegistry = new NacosServiceRegistry();
-        serviceProvider = new ServiceProviderImpl();
+        this.serviceRegistry = new NacosServiceRegistry();
+        this.serviceProvider = new ServiceProviderImpl();
         this.serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode);
         this.limiter = ExtensionFactory.getExtension(Limiter.class, limiterType);
         this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
-        this.serverStatus = new ServerStatus();
+        this.status = new Status();
         scanServices();
     }
 
@@ -61,7 +61,6 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
@@ -71,7 +70,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
                     .childOption(ChannelOption.TCP_NODELAY, true)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
+                        protected void initChannel(SocketChannel ch) {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new IdleStateHandler(NETTY_READER_IDLE_TIME, NETTY_WRITER_IDLE_TIME, NETTY_ALL_IDLE_TIME, NETTY_IDLE_TIME_UNIT))
 //                                    添加编码器
@@ -79,7 +78,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
 //                                    添加解码器
                                     .addLast(new NettyDecoder())
 //                                    添加Netty客户端处理器
-                                    .addLast(new NettyServerHandler(serverStatus, limiter));
+                                    .addLast(new NettyServerHandler(status, limiter));
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host, port).sync();

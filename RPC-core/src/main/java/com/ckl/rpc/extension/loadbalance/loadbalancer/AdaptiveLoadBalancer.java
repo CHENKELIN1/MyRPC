@@ -1,11 +1,11 @@
 package com.ckl.rpc.extension.loadbalance.loadbalancer;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.ckl.rpc.entity.ClientMonitorContent;
 import com.ckl.rpc.entity.RpcRequest;
-import com.ckl.rpc.entity.ServerMonitorContent;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.status.ServerMonitor;
+import com.ckl.rpc.status.ClientMonitor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -26,7 +26,7 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
     @Override
     public Instance select(List<Instance> instances, RpcRequest rpcRequest) {
 //        获取监控器
-        ServerMonitor serverMonitor = SingletonFactory.getInstance(ServerMonitor.class);
+        ClientMonitor clientMonitor = SingletonFactory.getInstance(ClientMonitor.class);
 //        初始化结果
         Instance result = null;
         int score = Integer.MAX_VALUE;
@@ -34,14 +34,14 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
         for (int i = 0; i < instances.size(); i++) {
             Instance instance = instances.get(i);
 //            获取监控内容
-            ServerMonitorContent serverMonitorContent = serverMonitor.getMonitorContent(getAddress(instance));
+            ClientMonitorContent clientMonitorContent = clientMonitor.getMonitorContent(getAddress(instance));
 //            为空则表示未使用过，则直接返回
-            if (serverMonitorContent == null) {
+            if (clientMonitorContent == null) {
 //                log.info("select not used:" + getAddress(instance));
                 return instance;
             }
 //            计算得分
-            int thisScore = getScore(serverMonitorContent);
+            int thisScore = getScore(clientMonitorContent);
 //            更新最佳值
             result = selectInstance(result, instance, score, thisScore);
             score = flushScore(score, thisScore);
@@ -53,11 +53,11 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
     /**
      * 计算得分
      *
-     * @param serverMonitorContent 监控内容
+     * @param clientMonitorContent 监控内容
      * @return 得分
      */
-    private int getScore(ServerMonitorContent serverMonitorContent) {
-        return serverMonitorContent.getServerStatus().getReceivedCount();
+    private int getScore(ClientMonitorContent clientMonitorContent) {
+        return clientMonitorContent.getStatus().getReceivedCount();
     }
 
     /**

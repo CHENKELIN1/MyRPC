@@ -136,7 +136,7 @@ Data            DataLength  传输数据
    import com.ckl.rpc.bean.BeanFactory;
    import com.ckl.rpc.config.DefaultConfig;
    import com.ckl.rpc.factory.SingletonFactory;
-   import com.ckl.rpc.status.ServerMonitor;
+   import com.ckl.rpc.status.ClientMonitor;
    
    public class TestNettyClientSingle {
        public static void main(String[] args) {
