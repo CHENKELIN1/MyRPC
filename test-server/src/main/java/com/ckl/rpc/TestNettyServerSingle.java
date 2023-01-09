@@ -1,7 +1,7 @@
 package com.ckl.rpc;
 
 import com.ckl.rpc.annotation.MyRpcServiceScan;
-import com.ckl.rpc.transport.RpcServer;
+import com.ckl.rpc.transport.common.server.RpcServer;
 import com.ckl.rpc.transport.netty.server.NettyServer;
 
 /**

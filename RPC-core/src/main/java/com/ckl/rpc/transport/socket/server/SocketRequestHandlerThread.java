@@ -8,7 +8,7 @@ import com.ckl.rpc.entity.ServerStatus;
 import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.status.ServerStatusHandler;
-import com.ckl.rpc.transport.RequestHandler;
+import com.ckl.rpc.transport.common.handler.RequestHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

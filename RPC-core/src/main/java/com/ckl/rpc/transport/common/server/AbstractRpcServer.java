@@ -1,4 +1,4 @@
-package com.ckl.rpc.transport;
+package com.ckl.rpc.transport.common.server;
 
 import com.ckl.rpc.annotation.MyRpcService;
 import com.ckl.rpc.annotation.MyRpcServiceScan;

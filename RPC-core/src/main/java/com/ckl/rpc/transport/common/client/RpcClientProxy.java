@@ -1,4 +1,4 @@
-package com.ckl.rpc.transport;
+package com.ckl.rpc.transport.common.client;
 
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
