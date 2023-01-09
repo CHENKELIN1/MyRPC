@@ -2,53 +2,19 @@
 
 实现一个简单的RPC框架
 
-## 项目结构
-
-```.
-├── RPC-api:接口
-├── RPC-client:客户端测试
-├── RPC-common:通用类
-│ └── src.main.java.com.ckl.rpc
-│                         ├── config:配置类
-│                         ├── entity:实体类
-│                         ├── enumeration:枚举类
-│                         ├── exception:异常类
-│                         ├── factory:工厂类
-│                         └── util:工具类
-├── RPC-core:核心功能
-│ └── src.main.java.com.ckl.rpc
-│                         ├── annotation:自定义注解
-│                         ├── bean:接口管理
-│                         ├── codec:编码译码器
-│                         ├── handler:处理器
-│                         ├── hook:钩子函数
-│                         ├── limiter:限制器
-│                         ├── loadbalancer:负载均衡器
-│                         ├── provider:服务提供
-│                         ├── registry:服务注册
-│                         ├── serializer:序列化器
-│                         ├── status:服务器状态
-│                         └── transport:通信方式
-│                             ├── netty:netty通信
-│                             │ ├── client:客户端
-│                             │ └── server:服务端
-│                             └── socket:socket通信
-│                                 ├── client:客户端
-│                                 └── server:服务端
-└── RPC-server:服务端测试
-```
-
 ## 协议说明
 
 采用自定义协议防止粘包
 
 ```
-MagicNumber     4bytes      自定义协议标识
-PackageType     4bytes      包类型
-SerializerType  4bytes      序列化方式
-DataLength      4bytes      数据长度
-Undefined       16bytes     可扩展协议
-Data            DataLength  传输数据   
+MagicNumber     4bytes        自定义协议标识
+PackageType     4bytes        包类型
+SerializerType  4bytes        序列化方式
+CompressCode    4bytes        压缩方式
+DataLength      4bytes        数据长度
+ExpandLength    4bytes        扩展协议长度
+ExpandData      expandLength  扩展协议内容
+Data            DataLength    传输数据   
 ```
 
 ## 功能实现
@@ -69,7 +35,7 @@ Data            DataLength  传输数据
 14. 自适应负载均衡
 15. 业务分组
 16. 健康检测
-17. 熔断限流
+17. 服务限流
 
 ## 项目运行
 
@@ -182,7 +148,8 @@ Data            DataLength  传输数据
 - v1.0:实现基础远程调用;
 - v2.0:实现多种序列化器;采用Netty通信;
 - v3.0:实现Nacos服务注册发现;负载均衡;自动注册;连接复用;
-- v4.0:实现可扩展协议;业务分组;健康检测;熔断限流;
+- v4.0:实现可扩展协议;业务分组;健康检测;服务限流;
+- v5.0:优化项目结构;修复错误;扩展负载均衡、服务限流;数据压缩
 
 ### 参考
 
