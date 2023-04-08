@@ -2,18 +2,16 @@ package com.ckl.rpc.transport.netty.client;
 
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
-import com.ckl.rpc.enumeration.CompressType;
-import com.ckl.rpc.enumeration.LoadBalanceType;
-import com.ckl.rpc.enumeration.RpcError;
-import com.ckl.rpc.enumeration.SerializerCode;
+import com.ckl.rpc.enumeration.*;
 import com.ckl.rpc.exception.RpcException;
-import com.ckl.rpc.extension.ExtensionFactory;
 import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
+import com.ckl.rpc.extension.registry.RegistryHandler;
 import com.ckl.rpc.extension.serialize.Serializer;
+import com.ckl.rpc.factory.ExtensionFactory;
 import com.ckl.rpc.factory.SingletonFactory;
-import com.ckl.rpc.registry.NacosServiceDiscovery;
 import com.ckl.rpc.registry.ServiceDiscovery;
+import com.ckl.rpc.registry.ServiceDiscoveryImpl;
 import com.ckl.rpc.status.StatusHandler;
 import com.ckl.rpc.transport.common.client.RpcClient;
 import io.netty.channel.Channel;
@@ -39,10 +37,14 @@ public class NettyClient implements RpcClient {
     private final Compresser compresser;
 
 
-    public NettyClient(SerializerCode serializerCode, LoadBalanceType loadBalanceType, CompressType compressType) {
-        this.serviceDiscovery = new NacosServiceDiscovery(ExtensionFactory.getExtension(LoadBalancer.class, loadBalanceType));
-        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode);
-        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
+    public NettyClient(SerializerCode serializerCode, LoadBalanceType loadBalanceType, CompressType compressType, RegistryCode registryCode) {
+        LoadBalancer loadBalancer = ExtensionFactory.getExtension(LoadBalancer.class, loadBalanceType.getCode());
+        RegistryHandler registryHandler = ExtensionFactory.getExtension(RegistryHandler.class, registryCode.getCode());
+        Serializer serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode.getCode());
+        Compresser compresser = ExtensionFactory.getExtension(Compresser.class, compressType.getCode());
+        this.serviceDiscovery = new ServiceDiscoveryImpl(loadBalancer, registryHandler);
+        this.serializer = serializer;
+        this.compresser = compresser;
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
 

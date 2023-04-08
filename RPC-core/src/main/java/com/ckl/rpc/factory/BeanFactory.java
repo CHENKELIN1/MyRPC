@@ -1,4 +1,4 @@
-package com.ckl.rpc.bean;
+package com.ckl.rpc.factory;
 
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.config.Init;
@@ -24,9 +24,9 @@ public class BeanFactory implements DefaultConfig {
         log.info("初始化BeanFactory...");
         RpcClient rpcClient;
         if (DEFAULT_TRANSMISSION == TransmissionType.SOCKET) {
-            rpcClient = new SocketClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER);
+            rpcClient = new SocketClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER,DEFAULT_SERVER_REGISTRY);
         } else if (DEFAULT_TRANSMISSION == TransmissionType.NETTY) {
-            rpcClient = new NettyClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER);
+            rpcClient = new NettyClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER,DEFAULT_SERVER_REGISTRY);
         } else {
             rpcClient = null;
         }

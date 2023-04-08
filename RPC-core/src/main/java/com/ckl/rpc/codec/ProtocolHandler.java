@@ -1,11 +1,11 @@
 package com.ckl.rpc.codec;
 
+import com.ckl.rpc.factory.ExtensionFactory;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.PackageType;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
-import com.ckl.rpc.extension.ExtensionFactory;
 import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
 import lombok.extern.slf4j.Slf4j;

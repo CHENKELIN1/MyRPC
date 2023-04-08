@@ -1,10 +1,13 @@
 package com.ckl.rpc.extension.limit.limiter;
 
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.enumeration.LimiterType;
 import com.ckl.rpc.extension.limit.Limiter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@MyRpcExtension(limitType = LimiterType.FUNNEL_RATE)
 public class FunnelRateLimiter implements DefaultConfig, Limiter {
     //    容量
     private final int capacity = LIMIT_FUNNEL_CAPACITY;

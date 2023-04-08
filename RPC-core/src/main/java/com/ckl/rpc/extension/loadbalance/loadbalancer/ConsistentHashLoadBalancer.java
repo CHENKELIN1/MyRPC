@@ -1,19 +1,22 @@
 package com.ckl.rpc.extension.loadbalance.loadbalancer;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.entity.RpcRequest;
+import com.ckl.rpc.enumeration.LoadBalanceType;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-
+@MyRpcExtension(loadBalanceType = LoadBalanceType.LOAD_BALANCE_CONSISTENT_HASH)
 public class ConsistentHashLoadBalancer implements LoadBalancer {
     ConcurrentHashMap<String, HashSelector> selectors = new ConcurrentHashMap<>();
 
     @Override
-    public Instance select(List<Instance> instances, RpcRequest rpcRequest) {
+    public InetSocketAddress select(List<InetSocketAddress> instances, RpcRequest rpcRequest) {
         String key = rpcRequest.getServiceName() + rpcRequest.getGroup();
         HashSelector hashSelector = selectors.get(key);
         if (hashSelector == null) {
@@ -24,13 +27,13 @@ public class ConsistentHashLoadBalancer implements LoadBalancer {
     }
 
     static class HashSelector {
-        private final TreeMap<Integer, Instance> nodes;
+        private final TreeMap<Integer, InetSocketAddress> nodes;
 
-        HashSelector(List<Instance> instances) {
+        HashSelector(List<InetSocketAddress> instances) {
             this.nodes = new TreeMap<>();
-            for (Instance instance : instances) {
+            for (InetSocketAddress instance : instances) {
                 for (int virtual = 0; virtual < 5; virtual++) {
-                    String str = instance.getIp() + instance.getPort() + virtual;
+                    String str = instance.getHostName() + instance.getPort() + virtual;
                     int hash = getHash(str);
                     nodes.put(hash, instance);
                 }
@@ -53,9 +56,9 @@ public class ConsistentHashLoadBalancer implements LoadBalancer {
             return hash;
         }
 
-        public Instance select(String key) {
+        public InetSocketAddress select(String key) {
             int hash = getHash(key);
-            Map.Entry<Integer, Instance> entry = nodes.tailMap(hash, true).firstEntry();
+            Map.Entry<Integer, InetSocketAddress> entry = nodes.tailMap(hash, true).firstEntry();
             if (entry == null) {
                 entry = nodes.firstEntry();
             }

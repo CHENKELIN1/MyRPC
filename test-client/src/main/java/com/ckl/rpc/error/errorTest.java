@@ -1,7 +1,7 @@
 package com.ckl.rpc.error;
 
 import com.ckl.rpc.api.MyTest;
-import com.ckl.rpc.bean.BeanFactory;
+import com.ckl.rpc.factory.BeanFactory;
 import com.ckl.rpc.enumeration.GroupName;
 
 /**

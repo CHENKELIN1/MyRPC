@@ -1,7 +1,7 @@
 package com.ckl.rpc;
 
 import com.ckl.rpc.api.MyTest;
-import com.ckl.rpc.bean.BeanFactory;
+import com.ckl.rpc.factory.BeanFactory;
 import com.ckl.rpc.enumeration.GroupName;
 import com.ckl.rpc.factory.SingletonFactory;
 import com.ckl.rpc.status.ClientMonitor;

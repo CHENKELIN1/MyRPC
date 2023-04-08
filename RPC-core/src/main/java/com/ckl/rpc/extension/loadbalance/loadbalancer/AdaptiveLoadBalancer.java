@@ -1,8 +1,10 @@
 package com.ckl.rpc.extension.loadbalance.loadbalancer;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.entity.ClientMonitorContent;
 import com.ckl.rpc.entity.RpcRequest;
+import com.ckl.rpc.enumeration.LoadBalanceType;
 import com.ckl.rpc.extension.loadbalance.LoadBalancer;
 import com.ckl.rpc.factory.SingletonFactory;
 import com.ckl.rpc.status.ClientMonitor;
@@ -15,6 +17,7 @@ import java.util.List;
  * 自适应负载均衡器
  */
 @Slf4j
+@MyRpcExtension(loadBalanceType = LoadBalanceType.LOAD_BALANCE_ADAPTIVE)
 public class AdaptiveLoadBalancer implements LoadBalancer {
     /**
      * 选择服务实例
@@ -24,15 +27,15 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
      * @return 服务实例
      */
     @Override
-    public Instance select(List<Instance> instances, RpcRequest rpcRequest) {
+    public InetSocketAddress select(List<InetSocketAddress> instances, RpcRequest rpcRequest) {
 //        获取监控器
         ClientMonitor clientMonitor = SingletonFactory.getInstance(ClientMonitor.class);
 //        初始化结果
-        Instance result = null;
+        InetSocketAddress result = null;
         int score = Integer.MAX_VALUE;
 //        遍历所有接口
         for (int i = 0; i < instances.size(); i++) {
-            Instance instance = instances.get(i);
+            InetSocketAddress instance = instances.get(i);
 //            获取监控内容
             ClientMonitorContent clientMonitorContent = clientMonitor.getMonitorContent(getAddress(instance));
 //            为空则表示未使用过，则直接返回
@@ -66,8 +69,8 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
      * @param instance 接口实例
      * @return 地址
      */
-    private InetSocketAddress getAddress(Instance instance) {
-        return new InetSocketAddress(instance.getIp(), instance.getPort());
+    private InetSocketAddress getAddress(InetSocketAddress instance) {
+        return new InetSocketAddress(instance.getHostName(), instance.getPort());
     }
 
     /**
@@ -79,7 +82,7 @@ public class AdaptiveLoadBalancer implements LoadBalancer {
      * @param s2 实例2得分
      * @return 选择结果
      */
-    private Instance selectInstance(Instance i1, Instance i2, int s1, int s2) {
+    private InetSocketAddress selectInstance(InetSocketAddress i1, InetSocketAddress i2, int s1, int s2) {
         return s1 < s2 ? i1 : i2;
     }
 

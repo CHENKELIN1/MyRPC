@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum LoadBalanceType {
+    NULL(-1),
     LOAD_BALANCE_RANDOM(0),
     LOAD_BALANCE_ROUND(1),
     LOAD_BALANCE_ADAPTIVE(2),

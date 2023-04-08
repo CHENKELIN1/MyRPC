@@ -1,10 +1,10 @@
 package com.ckl.rpc.transport.netty.client;
 
+import com.ckl.rpc.factory.ExtensionFactory;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.ResponseCode;
-import com.ckl.rpc.extension.ExtensionFactory;
 import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.SingletonFactory;
@@ -82,8 +82,8 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
                 SocketAddress socketAddress = ctx.channel().remoteAddress();
                 StatusHandler.ServerHandleSend((InetSocketAddress) socketAddress);
                 log.info("发送心跳包 [{}]", socketAddress);
-                Serializer serializer = ExtensionFactory.getExtension(Serializer.class, DEFAULT_SERIALIZER);
-                Compresser compresser = ExtensionFactory.getExtension(Compresser.class, DEFAULT_SERIALIZER);
+                Serializer serializer = ExtensionFactory.getExtension(Serializer.class, DEFAULT_SERIALIZER.getCode());
+                Compresser compresser = ExtensionFactory.getExtension(Compresser.class, DEFAULT_SERIALIZER.getCode());
                 Channel channel = ChannelProvider.get((InetSocketAddress) socketAddress, serializer, compresser);
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setHeartBeat(true);

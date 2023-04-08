@@ -1,5 +1,6 @@
 package com.ckl.rpc.extension.compress.compresser;
 
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.extension.compress.Compresser;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+@MyRpcExtension(compressType = CompressType.GZIP)
 public class GZipCompresser implements Compresser {
     private static final int BUFFER_SIZE = 1024 * 4;
 

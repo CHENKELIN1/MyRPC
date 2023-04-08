@@ -2,6 +2,7 @@ package com.ckl.rpc.extension.serialize.serializer;
 
 import com.caucho.hessian.io.HessianInput;
 import com.caucho.hessian.io.HessianOutput;
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.SerializeException;
 import com.ckl.rpc.extension.serialize.Serializer;
@@ -15,6 +16,7 @@ import java.io.IOException;
  * Hessian序列化器
  */
 @Slf4j
+@MyRpcExtension(serializerCode = SerializerCode.HESSIAN)
 public class HessianSerializer implements Serializer {
     @Override
     public byte[] serialize(Object obj) {

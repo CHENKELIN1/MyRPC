@@ -4,14 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 单例工厂
  */
 @Slf4j
 public class SingletonFactory {
-    private static Map<Class, Object> objectMap = new HashMap<>();
 
+    private static Map<Class,Object> objectMap = new ConcurrentHashMap<>();
     private SingletonFactory() {
     }
 

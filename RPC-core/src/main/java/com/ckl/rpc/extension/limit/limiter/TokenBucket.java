@@ -1,10 +1,13 @@
 package com.ckl.rpc.extension.limit.limiter;
 
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.enumeration.LimiterType;
 import com.ckl.rpc.extension.limit.Limiter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@MyRpcExtension(limitType = LimiterType.TOKEN_BUCKET)
 public class TokenBucket implements DefaultConfig, Limiter {
     private final int capacity = LIMIT_TOKEN_BUCKET_CAPACITY;
     private final int rate = LIMIT_TOKEN_BUCKET_RATE;

@@ -1,5 +1,8 @@
 package com.ckl.rpc.transport.netty.server;
 
+import com.ckl.rpc.enumeration.RegistryCode;
+import com.ckl.rpc.extension.registry.RegistryHandler;
+import com.ckl.rpc.factory.ExtensionFactory;
 import com.ckl.rpc.codec.Netty.NettyDecoder;
 import com.ckl.rpc.codec.Netty.NettyEncoder;
 import com.ckl.rpc.config.DefaultConfig;
@@ -7,13 +10,12 @@ import com.ckl.rpc.entity.Status;
 import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.enumeration.LimiterType;
 import com.ckl.rpc.enumeration.SerializerCode;
-import com.ckl.rpc.extension.ExtensionFactory;
 import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.limit.Limiter;
 import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProviderImpl;
-import com.ckl.rpc.registry.NacosServiceRegistry;
+import com.ckl.rpc.registry.ServiceRegistryImpl;
 import com.ckl.rpc.transport.common.server.AbstractRpcServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -35,17 +37,17 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
     private final Compresser compresser;
 
     public NettyServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER, DEFAULT_LIMITER, DEFAULT_COMPRESSER);
+        this(host, port, DEFAULT_SERIALIZER, DEFAULT_LIMITER, DEFAULT_COMPRESSER,DEFAULT_SERVER_REGISTRY);
     }
 
-    public NettyServer(String host, int port, SerializerCode serializerCode, LimiterType limiterType, CompressType compressType) {
+    public NettyServer(String host, int port, SerializerCode serializerCode, LimiterType limiterType, CompressType compressType,RegistryCode registryCode) {
         this.host = host;
         this.port = port;
-        this.serviceRegistry = new NacosServiceRegistry();
+        this.serviceRegistry = new ServiceRegistryImpl(ExtensionFactory.getExtension(RegistryHandler.class, registryCode.getCode()));
         this.serviceProvider = new ServiceProviderImpl();
-        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode);
-        this.limiter = ExtensionFactory.getExtension(Limiter.class, limiterType);
-        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
+        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializerCode.getCode());
+        this.limiter = ExtensionFactory.getExtension(Limiter.class, limiterType.getCode());
+        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType.getCode());
         this.status = new Status();
         scanServices();
     }

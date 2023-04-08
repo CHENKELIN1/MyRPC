@@ -11,19 +11,23 @@ public interface DefaultConfig {
     /*
      * client server config
      * */
-    SerializerCode DEFAULT_SERIALIZER = SerializerCode.KRYO;
+    SerializerCode DEFAULT_SERIALIZER = SerializerCode.PROTOBUF;
     TransmissionType DEFAULT_TRANSMISSION = TransmissionType.NETTY;
     LoadBalanceType DEFAULT_LOAD_BALANCE = LoadBalanceType.LOAD_BALANCE_CONSISTENT_HASH;
     LimiterType DEFAULT_LIMITER = LimiterType.TOKEN_BUCKET;
     CompressType DEFAULT_COMPRESSER = CompressType.GZIP;
+    RegistryCode DEFAULT_SERVER_REGISTRY = RegistryCode.REDIS;
     /*
      * nacos config
      * */
     String DEFAULT_NACOS_SERVER_ADDRESS = "81.68.85.4:8850";
+    String DEFAULT_REDIS_HOST = "localhost";
+    Integer DEFAULT_REDIS_PORT = 6379;
     /*
      * server scan config
      * */
     String DEFAULT_PACKAGE = "com.ckl.rpc";
+    String DEFAULT_EXTENSION_PACKAGE = "com.ckl.rpc.extension";
     /*
      * service group config
      * */

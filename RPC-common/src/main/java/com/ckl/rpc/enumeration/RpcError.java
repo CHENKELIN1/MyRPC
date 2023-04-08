@@ -25,6 +25,7 @@ public enum RpcError {
     REGISTER_SERVICE_FAILED("注册服务失败"),
     CLIENT_BUSY("客户端繁忙"),
     PROTOCOL_DECODER_ERROR("协议解析出错"),
-    CHANNEL_NOT_ACTIVE("channel连接失效");
+    CHANNEL_NOT_ACTIVE("channel连接失效"),
+    CAN_NOT_FIND_EXTENSION("查询不到该扩展功能,该扩展类未添加注解:@MyRpcExtension");
     private final String message;
 }

@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MyRpcServiceScan {
 
-    public String value() default "";
+    String value() default "";
 
 }

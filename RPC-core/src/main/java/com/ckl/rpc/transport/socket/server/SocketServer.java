@@ -1,16 +1,18 @@
 package com.ckl.rpc.transport.socket.server;
 
+import com.ckl.rpc.enumeration.RegistryCode;
+import com.ckl.rpc.extension.registry.RegistryHandler;
+import com.ckl.rpc.factory.ExtensionFactory;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.Status;
 import com.ckl.rpc.enumeration.CompressType;
 import com.ckl.rpc.enumeration.SerializerCode;
-import com.ckl.rpc.extension.ExtensionFactory;
 import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
 import com.ckl.rpc.factory.ThreadPoolFactory;
 import com.ckl.rpc.hook.ShutdownHook;
 import com.ckl.rpc.provider.ServiceProviderImpl;
-import com.ckl.rpc.registry.NacosServiceRegistry;
+import com.ckl.rpc.registry.ServiceRegistryImpl;
 import com.ckl.rpc.transport.common.handler.RequestHandler;
 import com.ckl.rpc.transport.common.server.AbstractRpcServer;
 import lombok.extern.slf4j.Slf4j;
@@ -35,17 +37,17 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
     private final RequestHandler requestHandler = new RequestHandler();
 
     public SocketServer(String host, int port) {
-        this(host, port, DEFAULT_SERIALIZER, DEFAULT_COMPRESSER);
+        this(host, port, DEFAULT_SERIALIZER, DEFAULT_COMPRESSER,DEFAULT_SERVER_REGISTRY);
     }
 
-    public SocketServer(String host, int port, SerializerCode serializer, CompressType compressType) {
+    public SocketServer(String host, int port, SerializerCode serializer, CompressType compressType,RegistryCode registryCode) {
         this.host = host;
         this.port = port;
         threadPool = ThreadPoolFactory.createDefaultThreadPool("socket-rpc-server");
-        this.serviceRegistry = new NacosServiceRegistry();
+        this.serviceRegistry = new ServiceRegistryImpl(ExtensionFactory.getExtension(RegistryHandler.class, registryCode.getCode()));
         this.serviceProvider = new ServiceProviderImpl();
-        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializer);
-        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType);
+        this.serializer = ExtensionFactory.getExtension(Serializer.class, serializer.getCode());
+        this.compresser = ExtensionFactory.getExtension(Compresser.class, compressType.getCode());
         this.status = new Status();
         scanServices();
     }

@@ -30,7 +30,7 @@ public class ServiceProviderImpl implements ServiceProvider {
         if (serviceMap.containsKey(register)) return;
 //        添加映射关系到map
         serviceMap.put(register, service);
-        log.info("向接口: {} 注册服务: {}", service.getClass().getInterfaces(), new Register(serviceName, group));
+        log.info("向接口: {} 注册服务: {}", service.getClass().getInterfaces(), register);
     }
 
     /**

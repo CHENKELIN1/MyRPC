@@ -3,6 +3,7 @@ package com.ckl.rpc.extension.loadbalance;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.ckl.rpc.entity.RpcRequest;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 
 /**
@@ -15,5 +16,5 @@ public interface LoadBalancer {
      * @param instances 所有服务实例
      * @return 服务实例
      */
-    Instance select(List<Instance> instances, RpcRequest rpcRequest);
+    InetSocketAddress select(List<InetSocketAddress> instances, RpcRequest rpcRequest);
 }

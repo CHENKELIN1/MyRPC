@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum CompressType {
+public enum RegistryCode {
     NULL(-1),
-    GZIP(0);
+    REDIS(0),
+    NACOS(1);
     private int code;
 }

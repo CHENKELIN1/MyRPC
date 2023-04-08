@@ -1,5 +1,6 @@
 package com.ckl.rpc.extension.serialize.serializer;
 
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.SerializerCode;
 import com.ckl.rpc.exception.SerializeException;
@@ -14,6 +15,7 @@ import java.io.IOException;
  * JSON序列化器
  */
 @Slf4j
+@MyRpcExtension(serializerCode = SerializerCode.JSON)
 public class JsonSerializer implements Serializer {
     private final ObjectMapper objectMapper = new ObjectMapper();
 

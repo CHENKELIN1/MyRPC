@@ -1,13 +1,16 @@
-package com.ckl.rpc.util;
+package com.ckl.rpc.extension.registry.registryHandler;
 
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.Register;
+import com.ckl.rpc.enumeration.RegistryCode;
 import com.ckl.rpc.enumeration.RpcError;
 import com.ckl.rpc.exception.RpcException;
+import com.ckl.rpc.extension.registry.RegistryHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -15,14 +18,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-/**
- * Nacos工具类
- */
 @Slf4j
-public class NacosUtil {
-    //    nacos服务地址
-    //    NamingService 是一种提供将名称映射到对象的方法的服务
+@MyRpcExtension(registryCode = RegistryCode.NACOS)
+public class NacosHandler implements RegistryHandler {
     private static final NamingService namingService;
     //    服务名
     private static final Set<Register> serviceNames = new HashSet<>();
@@ -33,11 +33,6 @@ public class NacosUtil {
         namingService = getNacosNamingService();
     }
 
-    /**
-     * 连接Nacos创建NamingService
-     *
-     * @return
-     */
     public static NamingService getNacosNamingService() {
         try {
             return NamingFactory.createNamingService(DefaultConfig.DEFAULT_NACOS_SERVER_ADDRESS);
@@ -47,34 +42,21 @@ public class NacosUtil {
         }
     }
 
-    /**
-     * 注册服务
-     *
-     * @param serviceName 服务名称
-     * @param address     服务地址
-     * @throws NacosException
-     */
-    public static void registerService(String serviceName, String group, InetSocketAddress address) throws NacosException {
+    @Override
+    public void registerService(String serviceName, String group, InetSocketAddress address) throws Exception {
         namingService.registerInstance(serviceName, group, address.getHostName(), address.getPort());
-        NacosUtil.address = address;
+        this.address = address;
         serviceNames.add(new Register(serviceName, group));
     }
 
-    /**
-     * 获取所有实例
-     *
-     * @param serviceName
-     * @return
-     * @throws NacosException
-     */
-    public static List<Instance> getAllInstance(String serviceName, String group) throws NacosException {
-        return namingService.getAllInstances(serviceName, group);
+    @Override
+    public List<InetSocketAddress> getAllInstance(String serviceName, String group) throws Exception {
+        List<Instance> instances = namingService.getAllInstances(serviceName, group);
+        return instances.stream().map(e -> new InetSocketAddress(e.getIp(), e.getPort())).collect(Collectors.toList());
     }
 
-    /**
-     * 清空所有注册表
-     */
-    public static void clearRegistry() {
+    @Override
+    public void clearRegistry() throws Exception {
         if (!serviceNames.isEmpty() && address != null) {
             String host = address.getHostName();
             int port = address.getPort();

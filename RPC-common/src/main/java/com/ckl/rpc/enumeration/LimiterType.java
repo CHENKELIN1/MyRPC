@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum LimiterType {
+    NULL(-1),
     COUNTER(0),
     FUNNEL_RATE(1),
     TOKEN_BUCKET(2);

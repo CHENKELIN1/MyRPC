@@ -1,6 +1,8 @@
 package com.ckl.rpc.extension.limit.limiter;
 
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.config.DefaultConfig;
+import com.ckl.rpc.enumeration.LimiterType;
 import com.ckl.rpc.extension.limit.Limiter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @Slf4j
 @NoArgsConstructor
+@MyRpcExtension(limitType = LimiterType.COUNTER)
 public class CounterLimiter implements Limiter, DefaultConfig {
     private int count;
 

@@ -68,6 +68,7 @@ public class RpcClientProxy {
                     CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>) client.sendRequest(rpcRequest);
 //                获取返回结果
                     rpcResponse = completableFuture.get();
+                    log.info("发送请求:req:{},rsp:{}",rpcRequest,rpcResponse);
                 } catch (Exception e) {
                     log.error("方法调用请求发送失败", e);
                     return null;

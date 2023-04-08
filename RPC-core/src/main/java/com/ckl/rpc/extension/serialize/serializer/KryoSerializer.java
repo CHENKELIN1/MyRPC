@@ -1,5 +1,6 @@
 package com.ckl.rpc.extension.serialize.serializer;
 
+import com.ckl.rpc.annotation.MyRpcExtension;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.enumeration.SerializerCode;
@@ -17,6 +18,7 @@ import java.io.ByteArrayOutputStream;
  * Kryo序列化器
  */
 @Slf4j
+@MyRpcExtension(serializerCode = SerializerCode.KRYO)
 public class KryoSerializer implements Serializer {
     private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
         Kryo kryo = new Kryo();

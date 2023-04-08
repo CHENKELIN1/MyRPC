@@ -5,8 +5,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum CompressType {
+public enum ExtensionType {
     NULL(-1),
-    GZIP(0);
-    private int code;
+    SERIALIZER(0),
+    LOAD_BALANCE(1),
+    LIMIT(2),
+    COMPRESS(3);
+    private int type;
 }
