@@ -35,9 +35,9 @@ public interface DefaultConfig {
     /*
      * netty config
      * */
-    long NETTY_WRITER_IDLE_TIME = 60;
-    long NETTY_READER_IDLE_TIME = 60;
-    long NETTY_ALL_IDLE_TIME = 60;
+    long NETTY_WRITER_IDLE_TIME = 5;
+    long NETTY_READER_IDLE_TIME = 5;
+    long NETTY_ALL_IDLE_TIME = 5;
     TimeUnit NETTY_IDLE_TIME_UNIT = TimeUnit.SECONDS;
     /*
      * limiter config

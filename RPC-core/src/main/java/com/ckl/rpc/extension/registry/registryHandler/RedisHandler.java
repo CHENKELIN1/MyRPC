@@ -30,7 +30,10 @@ public class RedisHandler implements RegistryHandler {
         String key = buildRedisKey(serviceName, group);
         String field = buildField(address);
         String value = buildRedisValue();
-        Long result = redisCLi.hset(key, field, value);
+        Long result;
+        synchronized (redisCLi) {
+            result = redisCLi.hset(key, field, value);
+        }
         if (result == 0) {
             log.error("服务注册失败:key:{},field:{},value:{}", key, field, value);
         }
@@ -39,7 +42,10 @@ public class RedisHandler implements RegistryHandler {
     @Override
     public List<InetSocketAddress> getAllInstance(String serviceName, String group) throws Exception {
         String key = buildRedisKey(serviceName, group);
-        Map<String, String> map = redisCLi.hgetAll(key);
+        Map<String, String> map;
+        synchronized (redisCLi) {
+            map = redisCLi.hgetAll(key);
+        }
         return map.keySet().stream().map(RedisHandler::fieldToAddress).collect(Collectors.toList());
     }
 
@@ -51,7 +57,7 @@ public class RedisHandler implements RegistryHandler {
                 try {
                     String key = buildRedisKey(register.getServiceName(), register.getGroup());
                     Long res = redisCLi.hdel(key, field);
-                    log.info("注销服务:service:{},address:{},res:{}",key,field,res);
+                    log.info("注销服务:service:{},address:{},res:{}", key, field, res);
                 } catch (Exception e) {
                     log.error("注销服务 {},{} 失败", register.getServiceName(), register.getGroup(), e);
                 }

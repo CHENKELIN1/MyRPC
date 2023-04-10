@@ -44,7 +44,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
             status.addReceived();
 //            获取心跳
             if (msg.getHeartBeat()) {
-                log.info("接收到客户端心跳包...");
+                log.info("接收到客户端: {} 的心跳包...",ctx.channel().remoteAddress());
                 response = RpcResponse.heartBeat(StatusHandler.ServerUpdateStatus(status), msg.getRequestId());
             } else {
                 limiter.preHandle();
