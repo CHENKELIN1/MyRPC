@@ -83,7 +83,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
                 StatusHandler.ServerHandleSend((InetSocketAddress) socketAddress);
                 log.info("发送心跳包 [{}]", socketAddress);
                 Serializer serializer = ExtensionFactory.getExtension(Serializer.class, DEFAULT_SERIALIZER.getCode());
-                Compresser compresser = ExtensionFactory.getExtension(Compresser.class, DEFAULT_SERIALIZER.getCode());
+                Compresser compresser = ExtensionFactory.getExtension(Compresser.class, DEFAULT_COMPRESSER.getCode());
                 Channel channel = ChannelProvider.get((InetSocketAddress) socketAddress, serializer, compresser);
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setHeartBeat(true);
