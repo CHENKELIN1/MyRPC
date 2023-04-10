@@ -76,6 +76,6 @@ public class RedisHandler implements RegistryHandler {
 
     public static InetSocketAddress fieldToAddress(String field) {
         String[] split = field.split(SPLIT);
-        return new InetSocketAddress(split[2], Integer.parseInt(split[3]));
+        return new InetSocketAddress(split[0], Integer.parseInt(split[1]));
     }
 }
