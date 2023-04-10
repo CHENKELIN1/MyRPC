@@ -63,7 +63,7 @@ public class SocketServer extends AbstractRpcServer implements DefaultConfig {
             serverSocket.bind(new InetSocketAddress(host, port));
             log.info("服务器启动……");
 //            添加钩子函数
-            ShutdownHook.getShutdownHook().addClearAllHook();
+            ShutdownHook.getShutdownHook().addClearAllHook(serviceRegistry);
             Socket socket;
 //            接收消息
             while ((socket = serverSocket.accept()) != null) {

@@ -41,9 +41,9 @@ public class test1 {
         Jedis jedis = new Jedis("localhost", 6380);
         String key = RedisHandler.buildRedisKey("s1", "g1");
         String s1 = RedisHandler.buildRedisValue();
-        String f1 = RedisHandler.buildField("s1", "g1", new InetSocketAddress("localhost", 9000));
+        String f1 = RedisHandler.buildField(new InetSocketAddress("localhost", 9000));
         String s2 = RedisHandler.buildRedisValue();
-        String f2 = RedisHandler.buildField("s1", "g1", new InetSocketAddress("localhost", 9001));
+        String f2 = RedisHandler.buildField(new InetSocketAddress("localhost", 9001));
         jedis.hset(key, f1, s1);
         jedis.hset(key, f2, s2);
         System.out.println(key);

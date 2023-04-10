@@ -58,7 +58,7 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
     @Override
     public void start() {
 //        添加注销服务的钩子函数
-        ShutdownHook.getShutdownHook().addClearAllHook();
+        ShutdownHook.getShutdownHook().addClearAllHook(serviceRegistry);
 //        TODO
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();

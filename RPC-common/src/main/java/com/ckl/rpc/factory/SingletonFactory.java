@@ -2,6 +2,7 @@ package com.ckl.rpc.factory;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SingletonFactory {
 
-    private static Map<Class,Object> objectMap = new ConcurrentHashMap<>();
+    private static final Map<Class<?>,Object> objectMap = new ConcurrentHashMap<>();
     private SingletonFactory() {
     }
 
@@ -28,9 +29,10 @@ public class SingletonFactory {
             if (instance == null) {
                 try {
                     log.info("创建单例:" + clazz.getCanonicalName());
-                    instance = clazz.newInstance();
+                    instance = clazz.getDeclaredConstructor().newInstance();
                     objectMap.put(clazz, instance);
-                } catch (IllegalAccessException | InstantiationException e) {
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException |
+                         NoSuchMethodException e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
             }

@@ -1,9 +1,11 @@
 package com.ckl.rpc.extension.registry;
 
 import com.alibaba.nacos.api.exception.NacosException;
+import com.ckl.rpc.entity.Register;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Set;
 
 public interface RegistryHandler {
 
@@ -28,5 +30,5 @@ public interface RegistryHandler {
     /**
      * 清空所有注册表
      */
-    void clearRegistry() throws Exception;
+    void clearRegistry(Set<Register> service, InetSocketAddress address) throws Exception;
 }

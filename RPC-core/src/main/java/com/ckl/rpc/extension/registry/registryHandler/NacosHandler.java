@@ -14,7 +14,6 @@ import com.ckl.rpc.extension.registry.RegistryHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -24,10 +23,6 @@ import java.util.stream.Collectors;
 @MyRpcExtension(registryCode = RegistryCode.NACOS)
 public class NacosHandler implements RegistryHandler {
     private static final NamingService namingService;
-    //    服务名
-    private static final Set<Register> serviceNames = new HashSet<>();
-    //    服务端地址
-    private static InetSocketAddress address;
 
     static {
         namingService = getNacosNamingService();
@@ -45,8 +40,6 @@ public class NacosHandler implements RegistryHandler {
     @Override
     public void registerService(String serviceName, String group, InetSocketAddress address) throws Exception {
         namingService.registerInstance(serviceName, group, address.getHostName(), address.getPort());
-        this.address = address;
-        serviceNames.add(new Register(serviceName, group));
     }
 
     @Override
@@ -56,17 +49,16 @@ public class NacosHandler implements RegistryHandler {
     }
 
     @Override
-    public void clearRegistry() throws Exception {
-        if (!serviceNames.isEmpty() && address != null) {
+    public void clearRegistry(Set<Register> service, InetSocketAddress address) throws Exception {
+        if (!service.isEmpty() && address != null) {
             String host = address.getHostName();
             int port = address.getPort();
-            Iterator<Register> iterator = serviceNames.iterator();
-            while (iterator.hasNext()) {
-                Register register = iterator.next();
+            for (Register register : service) {
                 try {
                     namingService.deregisterInstance(register.getServiceName(), register.getGroup(), host, port);
+                    log.info("注销服务:service:{},address:{}",register.getServiceName()+register.getGroup(),host+port);
                 } catch (NacosException e) {
-                    log.error("注销服务 {} 失败", register.getServiceName(), register.getGroup(), e);
+                    log.error("注销服务 {},{} 失败", register.getServiceName(), register.getGroup(), e);
                 }
             }
         }
