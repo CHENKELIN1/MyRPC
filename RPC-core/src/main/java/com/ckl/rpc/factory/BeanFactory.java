@@ -2,11 +2,9 @@ package com.ckl.rpc.factory;
 
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.config.Init;
-import com.ckl.rpc.enumeration.TransmissionType;
 import com.ckl.rpc.transport.common.client.RpcClient;
 import com.ckl.rpc.transport.common.client.RpcClientProxy;
 import com.ckl.rpc.transport.netty.client.NettyClient;
-import com.ckl.rpc.transport.socket.client.SocketClient;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -23,13 +21,7 @@ public class BeanFactory implements DefaultConfig {
         Init.init();
         log.info("初始化BeanFactory...");
         RpcClient rpcClient;
-        if (DEFAULT_TRANSMISSION == TransmissionType.SOCKET) {
-            rpcClient = new SocketClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER,DEFAULT_SERVER_REGISTRY);
-        } else if (DEFAULT_TRANSMISSION == TransmissionType.NETTY) {
-            rpcClient = new NettyClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER,DEFAULT_SERVER_REGISTRY);
-        } else {
-            rpcClient = null;
-        }
+        rpcClient = new NettyClient(DEFAULT_SERIALIZER, DEFAULT_LOAD_BALANCE, DEFAULT_COMPRESSER,DEFAULT_SERVER_REGISTRY);
         rpcClientProxy = new RpcClientProxy(rpcClient);
         log.info("初始化完成:负载均衡器:{},序列化器:{},压缩工具：{}", DEFAULT_LOAD_BALANCE, DEFAULT_SERIALIZER, DEFAULT_COMPRESSER);
     }

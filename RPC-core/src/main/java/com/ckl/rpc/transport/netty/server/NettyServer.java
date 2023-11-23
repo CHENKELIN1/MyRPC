@@ -3,8 +3,8 @@ package com.ckl.rpc.transport.netty.server;
 import com.ckl.rpc.enumeration.RegistryCode;
 import com.ckl.rpc.extension.registry.RegistryHandler;
 import com.ckl.rpc.factory.ExtensionFactory;
-import com.ckl.rpc.codec.Netty.NettyDecoder;
-import com.ckl.rpc.codec.Netty.NettyEncoder;
+import com.ckl.rpc.codec.Decoder;
+import com.ckl.rpc.codec.Encoder;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.Status;
 import com.ckl.rpc.enumeration.CompressType;
@@ -76,9 +76,9 @@ public class NettyServer extends AbstractRpcServer implements DefaultConfig {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new IdleStateHandler(NETTY_READER_IDLE_TIME, NETTY_WRITER_IDLE_TIME, NETTY_ALL_IDLE_TIME, NETTY_IDLE_TIME_UNIT))
 //                                    添加编码器
-                                    .addLast(new NettyEncoder(serializer, compresser))
+                                    .addLast(new Encoder(serializer, compresser))
 //                                    添加解码器
-                                    .addLast(new NettyDecoder())
+                                    .addLast(new Decoder())
 //                                    添加Netty客户端处理器
                                     .addLast(new NettyServerHandler(status, limiter));
                         }

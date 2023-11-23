@@ -12,7 +12,6 @@ public interface DefaultConfig {
      * client server config
      * */
     SerializerCode DEFAULT_SERIALIZER = SerializerCode.PROTOBUF;
-    TransmissionType DEFAULT_TRANSMISSION = TransmissionType.NETTY;
     LoadBalanceType DEFAULT_LOAD_BALANCE = LoadBalanceType.LOAD_BALANCE_CONSISTENT_HASH;
     LimiterType DEFAULT_LIMITER = LimiterType.TOKEN_BUCKET;
     CompressType DEFAULT_COMPRESSER = CompressType.GZIP;
@@ -22,7 +21,7 @@ public interface DefaultConfig {
      * */
     String DEFAULT_NACOS_SERVER_ADDRESS = "81.68.85.4:8850";
     String DEFAULT_REDIS_HOST = "localhost";
-    Integer DEFAULT_REDIS_PORT = 6379;
+    Integer DEFAULT_REDIS_PORT = 6380;
     /*
      * server scan config
      * */

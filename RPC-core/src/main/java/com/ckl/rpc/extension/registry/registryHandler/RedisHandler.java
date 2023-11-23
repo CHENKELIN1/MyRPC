@@ -31,9 +31,7 @@ public class RedisHandler implements RegistryHandler {
         String field = buildField(address);
         String value = buildRedisValue();
         Long result;
-        synchronized (redisCLi) {
-            result = redisCLi.hset(key, field, value);
-        }
+        result = redisCLi.hset(key, field, value);
         if (result == 0) {
             log.error("服务注册失败:key:{},field:{},value:{}", key, field, value);
         }

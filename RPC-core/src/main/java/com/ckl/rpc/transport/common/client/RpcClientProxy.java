@@ -3,7 +3,6 @@ package com.ckl.rpc.transport.common.client;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.entity.RpcResponse;
 import com.ckl.rpc.transport.netty.client.NettyClient;
-import com.ckl.rpc.transport.socket.client.SocketClient;
 import com.ckl.rpc.util.RpcMessageChecker;
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,11 +72,6 @@ public class RpcClientProxy {
                     log.error("方法调用请求发送失败", e);
                     return null;
                 }
-            }
-//          Socket客户端处理方式
-            if (client instanceof SocketClient) {
-//            发送请求并获取响应结果
-                rpcResponse = (RpcResponse) client.sendRequest(rpcRequest);
             }
 //          检查请求体与响应体
             RpcMessageChecker.check(rpcRequest, rpcResponse);

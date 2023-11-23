@@ -1,7 +1,5 @@
-package com.ckl.rpc.codec.Netty;
+package com.ckl.rpc.codec;
 
-import com.ckl.rpc.codec.ExpendProtocol;
-import com.ckl.rpc.codec.Protocol;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.entity.RpcRequest;
 import com.ckl.rpc.enumeration.PackageType;
@@ -19,12 +17,12 @@ import java.util.Date;
  * 编码器
  */
 @Slf4j
-public class NettyEncoder extends MessageToByteEncoder {
+public class Encoder extends MessageToByteEncoder {
     //    序列化方式
     private final Serializer serializer;
     private final Compresser compresser;
 
-    public NettyEncoder(Serializer serializer, Compresser compresser) {
+    public Encoder(Serializer serializer, Compresser compresser) {
         this.serializer = serializer;
         this.compresser = compresser;
     }

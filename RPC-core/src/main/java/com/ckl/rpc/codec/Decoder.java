@@ -1,7 +1,5 @@
-package com.ckl.rpc.codec.Netty;
+package com.ckl.rpc.codec;
 
-import com.ckl.rpc.codec.Protocol;
-import com.ckl.rpc.codec.ProtocolHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
@@ -13,7 +11,7 @@ import java.util.List;
  * 解码器
  */
 @Slf4j
-public class NettyDecoder extends ReplayingDecoder {
+public class Decoder extends ReplayingDecoder {
     /**
      * 对传输内容进行解码，得到RpcRequest或RpcResponse对象，由netty内部调用
      *

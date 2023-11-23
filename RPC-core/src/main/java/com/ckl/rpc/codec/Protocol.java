@@ -59,36 +59,4 @@ public class Protocol {
         in.readBytes(data);
         this.expendProtocol = ExpendProtocol.expendProtocolHandleRead(expandData);
     }
-
-    /**
-     * 读取InputStream，解析为协议数据
-     *
-     * @param in
-     * @throws IOException
-     */
-    public Protocol(InputStream in) throws IOException {
-//        固定协议头
-        byte[] buffer = new byte[INT_LENGTH];
-        in.read(buffer);
-        this.magicNumber = DecodeUtil.bytesToInt(buffer);
-        in.read(buffer);
-        this.packageCode = DecodeUtil.bytesToInt(buffer);
-        in.read(buffer);
-        this.serializerCode = DecodeUtil.bytesToInt(buffer);
-        in.read(buffer);
-        this.compressCode = DecodeUtil.bytesToInt(buffer);
-        in.read(buffer);
-        this.dataLength = DecodeUtil.bytesToInt(buffer);
-        in.read(buffer);
-//        扩展协议
-        this.expandLength = DecodeUtil.bytesToInt(buffer);
-        byte[] expandData = new byte[expandLength];
-        in.read(expandData);
-        this.expandData = expandData;
-//        数据
-        byte[] data = new byte[this.dataLength];
-        in.read(data);
-        this.data = data;
-        this.expendProtocol = ExpendProtocol.expendProtocolHandleRead(expandData);
-    }
 }

@@ -1,7 +1,7 @@
 package com.ckl.rpc.transport.netty.client;
 
-import com.ckl.rpc.codec.Netty.NettyDecoder;
-import com.ckl.rpc.codec.Netty.NettyEncoder;
+import com.ckl.rpc.codec.Decoder;
+import com.ckl.rpc.codec.Encoder;
 import com.ckl.rpc.config.DefaultConfig;
 import com.ckl.rpc.extension.compress.Compresser;
 import com.ckl.rpc.extension.serialize.Serializer;
@@ -71,8 +71,8 @@ public class ChannelProvider implements DefaultConfig {
                 // RpcResponse -> ByteBuf
                 ch.pipeline()
                         .addLast(new IdleStateHandler(NETTY_READER_IDLE_TIME, NETTY_WRITER_IDLE_TIME, NETTY_ALL_IDLE_TIME, NETTY_IDLE_TIME_UNIT))
-                        .addLast(new NettyEncoder(serializer, compresser))
-                        .addLast(new NettyDecoder())
+                        .addLast(new Encoder(serializer, compresser))
+                        .addLast(new Decoder())
                         .addLast(new NettyClientHandler());
             }
         });
